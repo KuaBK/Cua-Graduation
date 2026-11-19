@@ -1,6 +1,6 @@
 /**
  * Thiệp Mời Tốt Nghiệp - Nguyễn Tuấn Phong
- * Script tương tác & Xử lý nhạc, phong bì, đếm ngược, gallery, RSVP
+ * Script tương tác & Xử lý nhạc, phong bì, pháo hoa rơi liên tục, lịch trình, RSVP
  */
 
 (function () {
@@ -115,10 +115,8 @@
   }
 
   // --- 2. YOUTUBE MUSIC CONTROLLER (Video ID: b-FHfiM8ILo) ---
-  const YOUTUBE_VIDEO_ID = 'b-FHfiM8ILo';
   let ytPlayer = null;
   let isPlaying = false;
-  let isPlayerReady = false;
 
   const musicToggleBtn = document.getElementById('music-toggle-btn');
   const ytIframe = document.getElementById('youtube-bg-player');
@@ -127,18 +125,12 @@
   window.onYouTubeIframeAPIReady = function () {
     ytPlayer = new YT.Player('youtube-bg-player', {
       events: {
-        'onReady': onPlayerReady,
         'onStateChange': onPlayerStateChange
       }
     });
   };
 
-  function onPlayerReady(event) {
-    isPlayerReady = true;
-  }
-
   function onPlayerStateChange(event) {
-    // 1: Playing, 2: Paused
     if (event.data === 1) {
       setMusicUIState(true);
     } else if (event.data === 2 || event.data === 0) {
@@ -150,11 +142,7 @@
     isPlaying = true;
     setMusicUIState(true);
     if (ytPlayer && ytPlayer.playVideo) {
-      try {
-        ytPlayer.playVideo();
-      } catch (e) {
-        console.log('Play error:', e);
-      }
+      try { ytPlayer.playVideo(); } catch (e) { }
     } else if (ytIframe && ytIframe.contentWindow) {
       ytIframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
     }
@@ -164,11 +152,7 @@
     isPlaying = false;
     setMusicUIState(false);
     if (ytPlayer && ytPlayer.pauseVideo) {
-      try {
-        ytPlayer.pauseVideo();
-      } catch (e) {
-        console.log('Pause error:', e);
-      }
+      try { ytPlayer.pauseVideo(); } catch (e) { }
     } else if (ytIframe && ytIframe.contentWindow) {
       ytIframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo' }), '*');
     }
@@ -229,7 +213,6 @@
   const envelopeOverlay = document.getElementById('envelope-overlay');
   const envelopeScene = document.getElementById('envelope-scene');
   const waxSealBtn = document.getElementById('wax-seal-btn');
-  const envelopeLetter = document.getElementById('envelope-letter');
   const envelopeTapHint = document.getElementById('envelope-tap-hint');
   const letterOpenBtn = document.getElementById('letter-open-btn');
 
@@ -239,7 +222,7 @@
     if (isUnsealed) return;
     isUnsealed = true;
 
-    // Phát nhạc ngay khi chạm con dấu sáp (Cử chỉ hợp lệ của người dùng trên Mobile)
+    // Phát nhạc ngay khi chạm con dấu sáp
     playMusic();
 
     envelopeScene.classList.add('unsealed');
@@ -260,18 +243,15 @@
       return;
     }
 
-    // Đảm bảo nhạc đã phát
     if (!isPlaying) {
       playMusic();
     }
 
-    // Ẩn phong bì mượt mà
     envelopeOverlay.classList.add('hide');
 
-    // Bắn pháo hoa Confetti chào mừng
-    fireConfetti();
+    // Bắn pháo hoa chào mừng
+    fireConfettiBurst();
 
-    // Hiển thị nút loa góc phải
     if (musicToggleBtn) {
       musicToggleBtn.style.display = 'flex';
     }
@@ -309,9 +289,9 @@
     });
   }
 
-  // --- 4. RENDER GALLERY POLAROID ---
+  // --- 4. RENDER GALLERY POLAROID (TO VÀ RỘNG TRÊN PC/LAPTOP) ---
   const galleryGrid = document.getElementById('gallery-grid');
-  const angles = [-3, 2, -1.5, 3, -2, 1, 2.5, -2.5, 1.5, -1, 3, -3, 2, -1.5, 2, -2];
+  const angles = [-2.5, 1.8, -1.2, 2.5, -1.8, 1.2, 2, -2, 1.5, -1.5, 2.2, -2.2, 1.6, -1.2, 1.8, -1.8];
 
   function renderGallery() {
     if (!galleryGrid) return;
@@ -416,7 +396,6 @@
     }
   }
 
-  // Keyboard navigation
   window.addEventListener('keydown', function (e) {
     if (!lightboxOverlay.classList.contains('active')) return;
     if (e.key === 'Escape') closeLightbox();
@@ -425,7 +404,6 @@
   });
 
   // --- 6. ĐẾM NGƯỢC THỜI GIAN (COUNTDOWN) ---
-  // Ngày tổ chức: 28/11/2026 16:30 (GMT+7)
   const TARGET_DATE = new Date('2026-11-28T16:30:00+07:00').getTime();
 
   const daysEl = document.getElementById('countdown-days');
@@ -497,25 +475,45 @@
     showToast('✓ Đã sao chép địa chỉ Bách Khoa!');
   }
 
-  // --- 8. FORM RSVP (XÁC NHẬN THAM DỰ) ---
+  // --- 8. FORM RSVP (XANH LÁ & ĐỎ CHUẨN XÁC THEO ẢNH 3) ---
   const rsvpForm = document.getElementById('rsvp-form');
   const rsvpSuccess = document.getElementById('rsvp-success');
-  const rsvpRadioLabels = document.querySelectorAll('.rsvp-radio-btn');
+  const btnAttend = document.getElementById('btn-attend');
+  const btnDecline = document.getElementById('btn-decline');
+  const attendanceInput = document.getElementById('attendance-value');
 
-  // Xử lý active radio
-  rsvpRadioLabels.forEach(label => {
-    const radio = label.querySelector('input[type="radio"]');
-    if (radio) {
-      radio.addEventListener('change', () => {
-        rsvpRadioLabels.forEach(l => l.classList.remove('selected'));
-        if (radio.checked) {
-          label.classList.add('selected');
-        }
-      });
+  function setAttendanceChoice(choice) {
+    if (!attendanceInput) return;
+    attendanceInput.value = choice;
+
+    if (choice === 'attend') {
+      btnAttend.classList.add('active');
+      btnAttend.querySelector('.check-icon').style.display = 'inline';
+
+      btnDecline.classList.remove('active');
+      btnDecline.querySelector('.check-icon').style.display = 'none';
+    } else {
+      btnDecline.classList.add('active');
+      btnDecline.querySelector('.check-icon').style.display = 'inline';
+
+      btnAttend.classList.remove('active');
+      btnAttend.querySelector('.check-icon').style.display = 'none';
     }
-  });
+  }
 
-  // Kiểm tra nếu đã phản hồi trước đó
+  if (btnAttend) {
+    btnAttend.addEventListener('click', function () {
+      setAttendanceChoice('attend');
+    });
+  }
+
+  if (btnDecline) {
+    btnDecline.addEventListener('click', function () {
+      setAttendanceChoice('cannot_attend');
+    });
+  }
+
+  // Kiểm tra lưu trữ trước đó
   const savedRsvp = localStorage.getItem('graduation_rsvp_tuanphong');
   if (savedRsvp) {
     try {
@@ -533,15 +531,14 @@
       e.preventDefault();
 
       const nameInput = document.getElementById('rsvp-name');
-      const guestsInput = document.getElementById('rsvp-guests');
+      const phoneInput = document.getElementById('rsvp-phone');
       const wishInput = document.getElementById('rsvp-wish');
-      const statusInput = document.querySelector('input[name="attendance"]:checked');
       const submitBtn = document.getElementById('rsvp-submit-btn');
 
       const rsvpData = {
         name: nameInput ? nameInput.value.trim() : '',
-        status: statusInput ? statusInput.value : 'attend',
-        guests: guestsInput ? guestsInput.value : '1',
+        phone: phoneInput ? phoneInput.value.trim() : '',
+        status: attendanceInput ? attendanceInput.value : 'attend',
         wish: wishInput ? wishInput.value.trim() : '',
         timestamp: new Date().toISOString()
       };
@@ -556,7 +553,7 @@
 
       setTimeout(() => {
         localStorage.setItem('graduation_rsvp_tuanphong', JSON.stringify(rsvpData));
-        fireConfetti();
+        fireConfettiBurst();
 
         if (rsvpForm) rsvpForm.style.display = 'none';
         if (rsvpSuccess) {
@@ -567,86 +564,162 @@
     });
   }
 
-  // --- 9. CONFETTI CANNON (CANVAS NATIVE TỰ VIẾT 100% OFFLINE) ---
-  function fireConfetti() {
-    const canvas = document.getElementById('confetti-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+  // --- 9. HIỆU ỨNG PHÁO HOA RƠI XUỐNG LIÊN TỤC (THEO ẢNH 1) + PHÁO HOA NỔ ---
+  const canvas = document.getElementById('confetti-canvas');
+  let ctx = null;
+  if (canvas) {
+    ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+  }
 
-    const colors = ['#3b82f6', '#60a5fa', '#93c5fd', '#f59e0b', '#fbbf24', '#ffffff', '#ec4899', '#10b981'];
-    const particles = [];
-    const count = 120;
+  // Bảng màu rực rỡ như Ảnh 1
+  const CONFETTI_COLORS = [
+    '#22c55e', // Xanh lá
+    '#3b82f6', // Xanh dương
+    '#a855f7', // Tím
+    '#ec4899', // Hồng
+    '#eab308', // Vàng
+    '#f97316', // Cam
+    '#06b6d4', // Cyan
+    '#ef4444'  // Đỏ
+  ];
+
+  // 1. Pháo hoa giấy rơi nhẹ nhàng liên tục (Persistent falling confetti as in Image 1)
+  const fallingFlakes = [];
+  const FLAKE_COUNT = 55;
+
+  function initFallingConfetti() {
+    if (!canvas) return;
+    fallingFlakes.length = 0;
+
+    for (let i = 0; i < FLAKE_COUNT; i++) {
+      fallingFlakes.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        w: Math.random() * 6 + 7,
+        h: Math.random() * 8 + 9,
+        vy: Math.random() * 1.4 + 0.8, // tốc độ rơi nhẹ nhàng
+        vx: (Math.random() - 0.5) * 0.6,
+        rotation: Math.random() * 360,
+        rSpeed: (Math.random() - 0.5) * 2.5,
+        color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+        opacity: Math.random() * 0.35 + 0.65,
+        seed: Math.random() * 100,
+        shape: Math.random() > 0.35 ? 'pill' : 'circle'
+      });
+    }
+  }
+
+  // 2. Mảng pháo hoa nổ khi mở thiệp hoặc gửi RSVP (Explosion burst)
+  const burstParticles = [];
+
+  function fireConfettiBurst() {
+    if (!canvas) return;
+    const count = 100;
+    const startX = canvas.width / 2;
+    const startY = canvas.height * 0.45;
 
     for (let i = 0; i < count; i++) {
-      particles.push({
-        x: canvas.width / 2,
-        y: canvas.height * 0.45,
-        vx: (Math.random() - 0.5) * 18,
-        vy: (Math.random() - 0.8) * 16,
-        size: Math.random() * 8 + 4,
-        color: colors[Math.floor(Math.random() * colors.length)],
+      burstParticles.push({
+        x: startX,
+        y: startY,
+        vx: (Math.random() - 0.5) * 20,
+        vy: (Math.random() - 0.85) * 18,
+        size: Math.random() * 8 + 5,
+        color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
         rotation: Math.random() * 360,
         rSpeed: (Math.random() - 0.5) * 12,
         opacity: 1,
-        shape: Math.random() > 0.4 ? 'rect' : 'circle'
+        shape: Math.random() > 0.4 ? 'rect' : 'circle',
+        decay: Math.random() * 0.005 + 0.008
       });
     }
+  }
 
-    let animationId = null;
-    let startTime = performance.now();
+  // Vòng lặp Render 60fps mượt mà
+  let lastTime = performance.now();
+  function loop(currentTime) {
+    if (!ctx || !canvas) return;
 
-    function render(currentTime) {
-      const elapsed = currentTime - startTime;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      let alive = false;
-      for (let p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.35; // gravity
-        p.vx *= 0.985; // drag
-        p.rotation += p.rSpeed;
-        p.opacity = Math.max(0, 1 - elapsed / 2800);
+    // Render pháo hoa rơi liên tục (Ảnh 1)
+    for (let f of fallingFlakes) {
+      f.y += f.vy;
+      f.x += Math.sin(currentTime * 0.002 + f.seed) * 0.8 + f.vx;
+      f.rotation += f.rSpeed;
 
-        if (p.opacity > 0) {
-          alive = true;
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate((p.rotation * Math.PI) / 180);
-          ctx.globalAlpha = p.opacity;
-          ctx.fillStyle = p.color;
-
-          if (p.shape === 'rect') {
-            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
-          } else {
-            ctx.beginPath();
-            ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
-            ctx.fill();
-          }
-          ctx.restore();
-        }
+      // Khi rơi xuống đáy thì quay lại đỉnh
+      if (f.y > canvas.height + 20) {
+        f.y = -20;
+        f.x = Math.random() * canvas.width;
       }
+      if (f.x < -20) f.x = canvas.width + 10;
+      if (f.x > canvas.width + 20) f.x = -10;
 
-      if (alive && elapsed < 3000) {
-        animationId = requestAnimationFrame(render);
+      ctx.save();
+      ctx.translate(f.x, f.y);
+      ctx.rotate((f.rotation * Math.PI) / 180);
+      ctx.globalAlpha = f.opacity;
+      ctx.fillStyle = f.color;
+
+      if (f.shape === 'pill') {
+        // Vẽ hình thoi/chữ nhật bo tròn như Ảnh 1
+        ctx.beginPath();
+        const r = Math.min(f.w, f.h) / 2.5;
+        ctx.roundRect(-f.w / 2, -f.h / 2, f.w, f.h, r);
+        ctx.fill();
       } else {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        cancelAnimationFrame(animationId);
+        ctx.beginPath();
+        ctx.arc(0, 0, f.w / 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // Render pháo nổ (nếu có)
+    for (let i = burstParticles.length - 1; i >= 0; i--) {
+      let p = burstParticles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.38; // gravity
+      p.vx *= 0.985;
+      p.rotation += p.rSpeed;
+      p.opacity -= p.decay;
+
+      if (p.opacity > 0) {
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = p.color;
+
+        if (p.shape === 'rect') {
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+        } else {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      } else {
+        burstParticles.splice(i, 1);
       }
     }
 
-    animationId = requestAnimationFrame(render);
+    requestAnimationFrame(loop);
   }
 
+  initFallingConfetti();
+  requestAnimationFrame(loop);
+
   window.addEventListener('resize', () => {
-    const canvas = document.getElementById('confetti-canvas');
     if (canvas) {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      initFallingConfetti();
     }
   });
 
 })();
-
