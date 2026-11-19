@@ -187,9 +187,9 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: payload
-        }).catch(() => {});
+        }).catch(() => { });
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function showGuestNameModal(prefillName = '') {
@@ -401,7 +401,7 @@
     fireWaxSealSparkles();
 
     // Hiển thị đếm lùi 3s trên lá thư và tự động vào trang (người dùng không cần bấm thêm nút nào)
-    let secondsLeft = 3;
+    let secondsLeft = 2;
     const autoSecEl = document.getElementById('auto-seconds');
     if (autoSecEl) autoSecEl.textContent = String(secondsLeft);
 

@@ -1,9 +1,21 @@
 {
+  "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.py"
+      "source": "/api/wishes",
+      "destination": "/api/wishes.py"
+    },
+    {
+      "source": "/api/track-click",
+      "destination": "/api/track_click.py"
+    },
+    {
+      "source": "/api/stats",
+      "destination": "/api/stats.py"
+    },
+    {
+      "source": "/api/rsvp",
+      "destination": "/api/wishes.py"
     }
   ]
 }
-
