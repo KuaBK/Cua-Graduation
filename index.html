@@ -422,7 +422,65 @@
       </div>
     </section>
 
-    <!-- SECTION 6: RSVP (ĐÃ BỎ NHẬP HỌ TÊN VÀ SỐ ĐIỆN THOẠI - GỬI THEO TÊN ĐÃ LƯU) -->
+    <!-- =======================================================================
+         SECTION 6: SỔ LƯU BÚT — ĐỂ LẠI VÀI DÒNG NHÉ (WISH WALL & GUESTBOOK)
+         ======================================================================= -->
+    <section class="guestbook-section" id="guestbook">
+      <div class="container-wide">
+        <!-- Section Header theo đúng ảnh mẫu -->
+        <div class="guestbook-header">
+          <span class="guestbook-eyebrow">SỔ LƯU BÚT</span>
+          <h2 class="guestbook-title">Để lại vài dòng nhé</h2>
+          <p class="guestbook-desc">
+            Một lời chúc nhỏ sẽ là món quà lớn. Mọi lời chúc đều được dán lên bức tường bên cạnh.
+          </p>
+        </div>
+
+        <div class="guestbook-grid">
+          <!-- CỘT TRÁI: FORM GỬI LỜI CHÚC -->
+          <div class="guestbook-form-col">
+            <form id="wish-form" class="wish-form">
+              <div class="wish-form-group">
+                <label for="wish-author" class="wish-label">Tên của bạn</label>
+                <input 
+                  type="text" 
+                  id="wish-author" 
+                  class="wish-input" 
+                  placeholder="Nhập tên của bạn..." 
+                  required 
+                  maxlength="50"
+                >
+              </div>
+
+              <div class="wish-form-group">
+                <label for="wish-content" class="wish-label">Lời chúc</label>
+                <textarea 
+                  id="wish-content" 
+                  class="wish-textarea" 
+                  rows="5" 
+                  placeholder="Chúc mừng tân cử nhân..." 
+                  required 
+                  maxlength="500"
+                ></textarea>
+              </div>
+
+              <button type="submit" id="wish-submit-btn" class="wish-submit-btn">
+                <span>Dán lên tường</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- CỘT PHẢI: BỨC TƯỜNG LỜI CHÚC (STICKY NOTE WALL) -->
+          <div class="guestbook-wall-col">
+            <div id="wishes-wall" class="wishes-wall">
+              <!-- Load động từ Neon PostgreSQL /api/wishes -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: RSVP (ĐÃ BỎ NHẬP HỌ TÊN VÀ SỐ ĐIỆN THOẠI - GỬI THEO TÊN ĐÃ LƯU) -->
     <section class="rsvp-section" id="rsvp">
       <div class="container-narrow">
         <div class="rsvp-card-image4">
@@ -433,7 +491,7 @@
           <div class="rsvp-sender-badge">
             <div class="rsvp-sender-pill">
               <span class="rsvp-sender-icon">✍️</span>
-              <span>Lời chúc từ: <strong class="dynamic-guest-name text-sky-400 font-bold">Bạn</strong></span>
+              <span>Khách mời: <strong class="dynamic-guest-name text-sky-400 font-bold">Bạn</strong></span>
               <button type="button" id="rsvp-edit-name-btn" class="rsvp-edit-name-btn" title="Đổi tên của bạn">(Đổi
                 tên)</button>
             </div>
@@ -474,13 +532,6 @@
               <input type="hidden" name="attendance" id="attendance-value" value="attend">
             </div>
 
-            <!-- LỜI CHÚC / LỜI NHẮN -->
-            <div class="rsvp-form-group-image4">
-              <label for="rsvp-wish" class="rsvp-label-image4">LỜI CHÚC / LỜI NHẮN</label>
-              <textarea id="rsvp-wish" class="rsvp-textarea-image4" rows="4"
-                placeholder="Chúc mừng bạn tốt nghiệp nhé!..."></textarea>
-            </div>
-
             <!-- Submit Button (Xanh dương hoàng gia như Ảnh 4) -->
             <button type="submit" id="rsvp-submit-btn" class="rsvp-submit-btn-image4">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -488,7 +539,7 @@
                 <line x1="22" y1="2" x2="11" y2="13"></line>
                 <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
               </svg>
-              <span>Gửi Phản Hồi</span>
+              <span>Xác Nhận Tham Dự</span>
             </button>
           </form>
         </div>

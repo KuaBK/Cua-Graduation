@@ -164,6 +164,32 @@
     if (!name) return;
     const guestElements = document.querySelectorAll('.dynamic-guest-name');
     guestElements.forEach(el => el.textContent = name);
+
+    // Điền sẵn tên vào ô "Tên của bạn" trong Sổ lưu bút (như trong ảnh mẫu)
+    const wishAuthorInput = document.getElementById('wish-author');
+    if (wishAuthorInput && (!wishAuthorInput.value || wishAuthorInput.value === 'Bạn')) {
+      wishAuthorInput.value = name;
+    }
+  }
+
+  // =========================================================================
+  // BẤT ĐỒNG BỘ: GHI NHẬN LƯỢT CLICK / TRUY CẬP THEO TÊN (ASYNC TRACKING)
+  // =========================================================================
+  function trackClick(action, details = '') {
+    const guestName = getStoredGuestName() || 'Ẩn danh';
+    const payload = JSON.stringify({ guest_name: guestName, action, details });
+    try {
+      if (navigator.sendBeacon) {
+        const blob = new Blob([payload], { type: 'application/json' });
+        navigator.sendBeacon('/api/track-click', blob);
+      } else {
+        fetch('/api/track-click', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload
+        }).catch(() => {});
+      }
+    } catch (e) {}
   }
 
   function showGuestNameModal(prefillName = '') {
@@ -186,6 +212,7 @@
   const existingGuestName = getStoredGuestName();
   if (existingGuestName) {
     updateGuestNameDOM(existingGuestName);
+    trackClick('visit', 'Truy cập lại trang thiệp');
   } else {
     // Nếu chưa có tên lưu, bắt buộc nhập tên ngay khi vừa vào trang
     showGuestNameModal();
@@ -202,6 +229,7 @@
       saveGuestName(enteredName);
       hideGuestNameModal();
       showToast(`✓ Chào mừng ${enteredName} đến với thiệp mời!`);
+      trackClick('set_name', `Khách nhập tên: ${enteredName}`);
     });
   }
 
@@ -339,6 +367,7 @@
     musicToggleBtn.addEventListener('click', function (e) {
       e.stopPropagation();
       toggleMusic();
+      trackClick('music_toggle', isPlaying ? 'Phát nhạc' : 'Dừng nhạc');
     });
   }
 
@@ -422,6 +451,8 @@
 
     // 3. Bắn chùm pháo hoa chào mừng hoành tráng
     fireConfettiBurst();
+
+    trackClick('open_invitation', 'Mở phong bì vào website');
 
     if (musicToggleBtn) {
       musicToggleBtn.style.display = 'flex';
@@ -519,6 +550,10 @@
     updateLightboxContent();
     lightboxOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
+    const item = GALLERY_IMAGES[idx];
+    if (item) {
+      trackClick('view_photo', `Xem ảnh: ${item.caption}`);
+    }
   }
 
   function closeLightbox() {
@@ -635,6 +670,7 @@
 
   if (copyAddressBtn) {
     copyAddressBtn.addEventListener('click', function () {
+      trackClick('copy_address', 'Sao chép địa chỉ Bách Khoa');
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(FULL_ADDRESS).then(() => {
           showToast('✓ Đã sao chép địa chỉ Bách Khoa!');
@@ -658,7 +694,155 @@
   }
 
   // =========================================================================
-  // 10. FORM RSVP (ĐÃ BỎ NHẬP HỌ TÊN VÀ SĐT - GỬI THEO TÊN ĐÃ LƯU)
+  // 10. SỔ LƯU BÚT — BỨC TƯỜNG LỜI CHÚC (WISH WALL & GUESTBOOK)
+  // Kết nối Neon PostgreSQL: load danh sách và lưu lời chúc mới
+  // =========================================================================
+  const wishesWall = document.getElementById('wishes-wall');
+  const wishForm = document.getElementById('wish-form');
+  const wishAuthor = document.getElementById('wish-author');
+  const wishContent = document.getElementById('wish-content');
+  const wishSubmitBtn = document.getElementById('wish-submit-btn');
+
+  // Điền trước tên khách đã lưu vào ô Tên của bạn
+  if (wishAuthor) {
+    const storedName = getStoredGuestName();
+    if (storedName) wishAuthor.value = storedName;
+
+    // Khi người dùng đổi tên ở ô này, đồng bộ lưu lại
+    wishAuthor.addEventListener('change', function () {
+      const val = this.value.trim();
+      if (val) saveGuestName(val);
+    });
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function createWishCardElement(item, isNew = false) {
+    const card = document.createElement('div');
+    card.className = 'wish-card' + (isNew ? ' wish-card-pop' : '');
+    const rot = item.rotation !== undefined ? item.rotation : (Math.random() * 4 - 2).toFixed(1);
+    card.style.transform = `rotate(${rot}deg)`;
+
+    const safeWish = escapeHtml(item.wish || '');
+    const safeName = escapeHtml(item.name || 'Người thương mến');
+
+    card.innerHTML = `
+      <div class="wish-text">“${safeWish}”</div>
+      <div class="wish-author">
+        <span class="wish-author-prefix">—</span>
+        <span>${safeName}</span>
+      </div>
+    `;
+    return card;
+  }
+
+  async function loadWishes() {
+    if (!wishesWall) return;
+    try {
+      const res = await fetch('/api/wishes');
+      if (!res.ok) throw new Error('HTTP error ' + res.status);
+      const data = await res.json();
+      const list = data.wishes || [];
+
+      wishesWall.innerHTML = '';
+      if (list.length === 0) {
+        wishesWall.innerHTML = `
+          <div class="wishes-empty">
+            <span>Chưa có lời chúc nào. Hãy là người đầu tiên dán lời chúc lên tường nhé! ✨</span>
+          </div>
+        `;
+        return;
+      }
+
+      list.forEach(item => {
+        const card = createWishCardElement(item);
+        wishesWall.appendChild(card);
+      });
+    } catch (err) {
+      console.warn('Lỗi tải danh sách wishes:', err);
+      wishesWall.innerHTML = `
+        <div class="wishes-empty">
+          <span>Đang sử dụng dữ liệu offline. Hãy thử tải lại trang nhé.</span>
+        </div>
+      `;
+    }
+  }
+
+  // Khởi tạo tải danh sách lời chúc từ PostgreSQL
+  loadWishes();
+
+  if (wishForm) {
+    wishForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const author = wishAuthor ? wishAuthor.value.trim() : '';
+      const content = wishContent ? wishContent.value.trim() : '';
+
+      if (!author) {
+        showToast('⚠️ Vui lòng nhập tên của bạn');
+        if (wishAuthor) wishAuthor.focus();
+        return;
+      }
+
+      if (!content) {
+        showToast('⚠️ Vui lòng nhập lời chúc');
+        if (wishContent) wishContent.focus();
+        return;
+      }
+
+      saveGuestName(author);
+
+      if (wishSubmitBtn) {
+        wishSubmitBtn.disabled = true;
+        wishSubmitBtn.innerHTML = `
+          <div style="width: 16px; height: 16px; border: 2px solid #042f2e; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+          <span>Đang dán lên tường...</span>
+        `;
+      }
+
+      try {
+        const res = await fetch('/api/wishes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: author, wish: content })
+        });
+        const result = await res.json();
+
+        if (res.ok && result.success) {
+          const emptyPlaceholder = wishesWall.querySelector('.wishes-empty, .wishes-loading');
+          if (emptyPlaceholder) emptyPlaceholder.remove();
+
+          const newCard = createWishCardElement(result.wish, true);
+          wishesWall.prepend(newCard);
+          wishesWall.scrollTop = 0;
+
+          fireConfettiBurst();
+          if (wishContent) wishContent.value = '';
+          showToast('✓ Lời chúc của bạn đã được dán lên tường!');
+        } else {
+          showToast('⚠️ ' + (result.error || 'Có lỗi xảy ra, vui lòng thử lại!'));
+        }
+      } catch (err) {
+        console.error('Lỗi khi gửi lời chúc:', err);
+        showToast('⚠️ Lỗi kết nối đến máy chủ!');
+      } finally {
+        if (wishSubmitBtn) {
+          wishSubmitBtn.disabled = false;
+          wishSubmitBtn.innerHTML = `<span>Dán lên tường</span>`;
+        }
+      }
+    });
+  }
+
+  // =========================================================================
+  // 11. FORM RSVP (LƯU VÀO NEON POSTGRESQL & THEO DÕI ASYNC)
   // =========================================================================
   const rsvpForm = document.getElementById('rsvp-form');
   const rsvpSuccess = document.getElementById('rsvp-success');
@@ -673,19 +857,13 @@
     attendanceInput.value = choice;
 
     if (choice === 'attend') {
-      // Sẽ tham dự -> XANH LÁ ACTIVE
       btnAttend.classList.add('active');
       if (checkAttend) checkAttend.style.display = 'inline';
-
-      // Rất tiếc, không thể -> INACTIVE
       btnDecline.classList.remove('active');
       if (checkDecline) checkDecline.style.display = 'none';
     } else {
-      // Rất tiếc, không thể -> ĐỎ ACTIVE (Ảnh 4)
       btnDecline.classList.add('active');
       if (checkDecline) checkDecline.style.display = 'inline';
-
-      // Sẽ tham dự -> INACTIVE
       btnAttend.classList.remove('active');
       if (checkAttend) checkAttend.style.display = 'none';
     }
@@ -716,18 +894,17 @@
   }
 
   if (rsvpForm) {
-    rsvpForm.addEventListener('submit', function (e) {
+    rsvpForm.addEventListener('submit', async function (e) {
       e.preventDefault();
 
-      const wishInput = document.getElementById('rsvp-wish');
       const submitBtn = document.getElementById('rsvp-submit-btn');
-      const currentName = getStoredGuestName() || 'Quý khách';
+      const currentName = getStoredGuestName() || (wishAuthor ? wishAuthor.value.trim() : '') || 'Quý khách';
+      const statusChoice = attendanceInput ? attendanceInput.value : 'attend';
 
       const rsvpData = {
-        name: currentName,
-        status: attendanceInput ? attendanceInput.value : 'attend',
-        wish: wishInput ? wishInput.value.trim() : '',
-        timestamp: new Date().toISOString()
+        guest_name: currentName,
+        status: statusChoice,
+        wish: ''
       };
 
       if (submitBtn) {
@@ -738,16 +915,33 @@
         `;
       }
 
-      setTimeout(() => {
-        localStorage.setItem('graduation_rsvp_tuanphong', JSON.stringify(rsvpData));
-        fireConfettiBurst();
+      try {
+        // Lưu phản hồi trực tiếp vào bảng rsvps trong PostgreSQL
+        await fetch('/api/rsvp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(rsvpData)
+        });
+      } catch (err) {
+        console.warn('Lỗi ghi nhận RSVP online:', err);
+      }
 
-        if (rsvpForm) rsvpForm.style.display = 'none';
-        if (rsvpSuccess) {
-          rsvpSuccess.style.display = 'block';
-          updateGuestNameDOM(currentName);
-        }
-      }, 700);
+      // Lưu trữ localStorage để duy trì trạng thái khi người dùng tải lại
+      localStorage.setItem('graduation_rsvp_tuanphong', JSON.stringify({
+        name: currentName,
+        status: statusChoice,
+        timestamp: new Date().toISOString()
+      }));
+
+      fireConfettiBurst();
+
+      if (rsvpForm) rsvpForm.style.display = 'none';
+      if (rsvpSuccess) {
+        rsvpSuccess.style.display = 'block';
+        updateGuestNameDOM(currentName);
+      }
+
+      showToast('✓ Cảm ơn bạn đã phản hồi tham dự!');
     });
   }
 
