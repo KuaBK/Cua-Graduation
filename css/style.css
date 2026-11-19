@@ -2266,7 +2266,6 @@ body {
   position: relative;
   background: radial-gradient(ellipse at 50% 10%, rgba(0, 84, 166, 0.25) 0%, transparent 70%),
               radial-gradient(circle at 15% 90%, rgba(2, 132, 199, 0.12) 0%, transparent 60%);
-  border-top: 1px solid rgba(56, 189, 248, 0.18);
 }
 
 @media (min-width: 768px) {
