@@ -67,7 +67,11 @@ class GraduationHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        if self.path == '/api/wishes':
+        if self.path == '/favicon.ico':
+            self.send_response(204)
+            self.end_headers()
+            return
+        elif self.path == '/api/wishes':
             self.handle_get_wishes()
         elif self.path == '/api/stats':
             self.handle_get_stats()
