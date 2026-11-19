@@ -77,3 +77,4 @@ python -m http.server 8080
 Bạn có thể dễ dàng đưa toàn bộ thư mục này lên các nền tảng miễn phí như:
 - **GitHub Pages:** Đẩy code lên GitHub và bật Pages trong mục Settings.
 - **Vercel / Netlify:** Kéo thả trực tiếp thư mục `graduation` vào trang dashboard của Netlify Drop hoặc Vercel để có ngay đường link chia sẻ cho bạn bè và thầy cô!
+
