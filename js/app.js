@@ -1,7 +1,7 @@
 /**
  * Thiệp Mời Tốt Nghiệp — Nguyễn Tuấn Phong
  * Phiên bản Đại học Bách Khoa TP.HCM (HCMUT)
- * Xử lý mở thư 3D, khóa cuộn trang triệt để, nhạc nền YouTube, pháo hoa rơi liên tục & RSVP
+ * Xử lý mở thư 3D tự động sau 3-5s, khóa cuộn trang triệt để, nhạc nền YouTube, pháo hoa rơi liên tục & RSVP
  */
 
 (function () {
@@ -248,7 +248,7 @@
   }
 
   // =========================================================================
-  // 4. HIỆU ỨNG MỞ PHONG BÌ 3D HOÀNG GIA & MỞ KHÓA CUỘN
+  // 4. HIỆU ỨNG MỞ PHONG BÌ 3D HOÀNG GIA: TỰ ĐỘNG VÀO SAU 3.5S (KHÔNG CẦN BẤM THÊM)
   // =========================================================================
   const envelopeOverlay = document.getElementById('envelope-overlay');
   const envelopeScene = document.getElementById('envelope-scene');
@@ -258,6 +258,8 @@
   const envelopeLetter = document.getElementById('envelope-letter');
 
   let isUnsealed = false;
+  let autoOpenTimer = null;
+  let countdownInterval = null;
 
   function unsealEnvelope() {
     if (isUnsealed) return;
@@ -274,17 +276,37 @@
     // Nổ pháo hoa vàng kim nhỏ tại con dấu
     fireWaxSealSparkles();
 
-    setTimeout(() => {
-      if (envelopeTapHint) {
-        envelopeTapHint.textContent = '✦ Chạm vào lá thư để mở toàn bộ thiệp ✦';
+    // Hiển thị đếm lùi 3s trên lá thư và tự động vào trang (người dùng không cần bấm thêm nút nào)
+    let secondsLeft = 3;
+    const autoSecEl = document.getElementById('auto-seconds');
+    if (autoSecEl) autoSecEl.textContent = String(secondsLeft);
+
+    countdownInterval = setInterval(() => {
+      secondsLeft--;
+      if (autoSecEl && secondsLeft >= 0) {
+        autoSecEl.textContent = String(secondsLeft);
       }
-    }, 1100);
+      if (secondsLeft <= 0) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+      }
+    }, 1000);
+
+    // Sau 3.5 giây hiện ra lá thư, tự động chuyển vào website
+    autoOpenTimer = setTimeout(() => {
+      openInvitation();
+    }, 3500);
   }
 
   function openInvitation() {
-    if (!isUnsealed) {
-      unsealEnvelope();
-      return;
+    // Xóa timer nếu người dùng bấm chủ động để không bị trigger 2 lần
+    if (autoOpenTimer) {
+      clearTimeout(autoOpenTimer);
+      autoOpenTimer = null;
+    }
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
     }
 
     if (!isPlaying) {
@@ -463,7 +485,7 @@
   });
 
   // =========================================================================
-  // 7. ĐẾM NGƯỢC THỜI GIAN (COUNTDOWN)
+  // 7. ĐẾM NGƯỢC THỜI GIAN (COUNTDOWN GỘP TRONG THẺ VINH DANH)
   // =========================================================================
   const TARGET_DATE = new Date('2026-11-28T16:30:00+07:00').getTime();
 
@@ -645,7 +667,7 @@
     canvas.height = window.innerHeight;
   }
 
-  // Bảng màu rực rỡ như Ảnh 2: Teal/Cyan, Amber, Violet, Pink, Green, Sky Blue, Coral Red
+  // Bảng màu rực rỡ: Teal/Cyan, Amber, Violet, Pink, Green, Sky Blue, Royal Blue, Coral Red
   const CONFETTI_COLORS = [
     '#06b6d4', // Teal/Cyan
     '#f59e0b', // Vàng cam hổ phách

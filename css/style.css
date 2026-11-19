@@ -278,7 +278,7 @@ body {
 
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(30px) scale(0.94); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Header inside Envelope Intro */
@@ -493,6 +493,36 @@ body {
   animation: fadeInPop 0.4s ease 0.8s backwards;
 }
 
+/* Thông báo tự động mở thiệp sau 3-5s (không cần bấm thêm nút) */
+.letter-auto-timer {
+  display: none;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.74rem;
+  color: #0284c7;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.envelope-3d-scene.unsealed .letter-auto-timer {
+  display: inline-flex;
+  animation: fadeInPop 0.4s ease 1s backwards;
+}
+
+.auto-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #0284c7;
+  box-shadow: 0 0 8px #0284c7;
+  animation: pulse-dot 1.2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
 .letter-hint-tag {
   font-size: 0.62rem;
   text-transform: uppercase;
@@ -673,7 +703,7 @@ body {
 }
 
 /* ==========================================================================
-   3. NÚT BẬT/TẮT NHẠC NỀN (BOTTOM-RIGHT THEO ẢNH 2)
+   3. NÚT BẬT/TẮT NHẠC NỀN (BOTTOM-RIGHT THEO ẢNH 1)
    ========================================================================== */
 .music-toggle-btn {
   position: fixed;
@@ -806,7 +836,7 @@ body {
 }
 
 /* ==========================================================================
-   SECTION 2: HERO ROYAL (TO & RỘNG TỐI ĐA THEO ẢNH 1 & ẢNH 2)
+   SECTION 2: HERO ROYAL (GỘP ĐẾM NGƯỢC & ĐỊA ĐIỂM VÀO ĐÂY THEO ẢNH 2)
    ========================================================================== */
 .hero-royal-section {
   padding: 2.5rem 1rem 3.5rem;
@@ -826,10 +856,10 @@ body {
 .royal-card-container {
   position: relative;
   width: 100%;
-  padding: 3.5rem 1.5rem;
+  padding: 3.5rem 1.5rem 3rem;
   border-radius: 2rem;
   border: 1.5px solid var(--border-gold);
-  background-color: rgba(9, 11, 16, 0.88);
+  background-color: rgba(9, 11, 16, 0.9);
   /* Chấm hổ phách chuẩn xác theo Ảnh 1 & 2 */
   background-image: radial-gradient(rgba(245, 158, 11, 0.2) 1.2px, transparent 1.2px);
   background-size: 19px 19px;
@@ -840,18 +870,18 @@ body {
 
 @media (min-width: 1024px) {
   .royal-card-container {
-    padding: 4.8rem 4rem;
+    padding: 4.8rem 4rem 4rem;
     border-radius: 2.5rem;
   }
 }
 
 @media (min-width: 1280px) {
   .royal-card-container {
-    padding: 5.5rem 5rem;
+    padding: 5.5rem 5rem 4.5rem;
   }
 }
 
-/* Badge ✦ LỄ TỐT NGHIỆP VINH DANH ✦ (Ảnh 2) */
+/* Badge ✦ LỄ TỐT NGHIỆP VINH DANH ✦ */
 .royal-badge {
   display: inline-block;
   padding: 0.45rem 1.35rem;
@@ -863,7 +893,17 @@ body {
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.35rem;
+}
+
+/* Card Subtitle "Tốt Nghiệp của" (Ảnh 2) */
+.card-intro-label {
+  font-size: 1.15rem;
+  color: #94a3b8;
+  font-family: var(--font-heading);
+  font-style: italic;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.04em;
 }
 
 /* Tên tân cử nhân Nguyễn Tuấn Phong to hùng vĩ */
@@ -873,7 +913,7 @@ body {
   font-weight: 800;
   letter-spacing: -0.01em;
   line-height: 1.15;
-  margin-bottom: 1.35rem;
+  margin-bottom: 0.4rem;
 }
 
 @media (min-width: 768px) {
@@ -888,12 +928,14 @@ body {
   }
 }
 
-.royal-divider-line {
-  width: 80px;
-  height: 2px;
-  background: rgba(245, 158, 11, 0.5);
-  margin: 0 auto 1.75rem;
-  border-radius: 9999px;
+/* Badge "CỬ NHÂN • KHOA HỌC MÁY TÍNH" (Ảnh 2) */
+.card-degree-badge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #38bdf8;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  margin-bottom: 1.6rem;
 }
 
 .royal-invitation-body {
@@ -901,7 +943,7 @@ body {
   line-height: 1.9;
   color: #e2e8f0;
   max-width: 780px;
-  margin: 0 auto 2rem;
+  margin: 0 auto 1.85rem;
 }
 
 @media (min-width: 768px) {
@@ -916,7 +958,7 @@ body {
   margin-bottom: 2.25rem;
 }
 
-/* Khung trích dẫn có thanh cam bên trái chuẩn Ảnh 2 */
+/* Khung trích dẫn có thanh cam bên trái chuẩn Ảnh 1 */
 .royal-quote-box {
   font-family: var(--font-heading);
   font-style: italic;
@@ -937,34 +979,224 @@ body {
   }
 }
 
-.event-time-pill-wrap {
+/* ==========================================================================
+   KHUNG 3 CỘT: THỜI GIAN | 28 THÁNG 11 2026 | ĐỊA ĐIỂM (CHUẨN THEO ẢNH 2)
+   ========================================================================== */
+.royal-cap-divider {
   display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 1.2rem;
+  margin: 2.5rem auto 2.25rem;
+  max-width: 750px;
+  padding: 0 1rem;
 }
 
-.event-pills-row {
+.divider-sparkle {
+  color: #38bdf8;
+  font-size: 1.2rem;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.4), rgba(56, 189, 248, 0.1));
+}
+
+.divider-line:first-of-type {
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.1), rgba(56, 189, 248, 0.4));
+}
+
+.divider-cap-icon {
+  color: #38bdf8;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 0.65rem 1.6rem;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.5));
+}
+
+.event-info-triplet {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+  margin: 1.5rem auto 2.5rem;
+  max-width: 960px;
+}
+
+@media (min-width: 768px) {
+  .event-info-triplet {
+    grid-template-columns: 1.15fr 0.95fr 1.15fr;
+    gap: 0;
+  }
+}
+
+.triplet-col {
+  padding: 0.5rem 1rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .triplet-col.time-col {
+    padding-right: 2rem;
+    border-right: 1px solid rgba(56, 189, 248, 0.2);
+  }
+  .triplet-col.venue-col {
+    padding-left: 2rem;
+    border-left: 1px solid rgba(56, 189, 248, 0.2);
+  }
+}
+
+.triplet-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: #38bdf8;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.45rem;
+}
+
+.triplet-label.date-bottom {
+  margin-top: 0.4rem;
+  margin-bottom: 0;
+  letter-spacing: 0.2em;
+}
+
+.triplet-value {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.45rem;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 1024px) {
+  .triplet-value {
+    font-size: 2.1rem;
+  }
+}
+
+.triplet-giant-day {
+  font-size: 4.8rem;
+  font-weight: 800;
+  color: #e0f2fe;
+  line-height: 1;
+  margin: 0.1rem 0;
+  font-family: var(--font-heading);
+  text-shadow: 0 0 30px rgba(56, 189, 248, 0.35);
+}
+
+@media (min-width: 1024px) {
+  .triplet-giant-day {
+    font-size: 5.8rem;
+  }
+}
+
+.triplet-subtext {
+  font-size: 0.88rem;
+  color: #cbd5e1;
+  line-height: 1.55;
+  max-width: 270px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   COUNTDOWN GỘP TRỰC TIẾP TRONG THẺ NÀY (CHUẨN THEO ẢNH 2)
+   ========================================================================== */
+.hero-countdown-block {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px dashed rgba(56, 189, 248, 0.2);
+  text-align: center;
+}
+
+.countdown-heading-sub {
   font-size: 0.95rem;
-  font-weight: 600;
-  color: #f59e0b;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  color: #cbd5e1;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.05em;
 }
 
-.event-pipe-separator {
-  color: #64748b;
-  font-weight: 400;
+.hero-countdown-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
 }
 
-.event-date-text,
-.event-time-text {
-  letter-spacing: 0.02em;
+@media (min-width: 640px) {
+  .hero-countdown-grid {
+    gap: 1.35rem;
+  }
+}
+
+.hero-countdown-box {
+  width: 75px;
+  height: 85px;
+  border-radius: 0.85rem;
+  background: rgba(8, 12, 20, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+@media (min-width: 640px) {
+  .hero-countdown-box {
+    width: 95px;
+    height: 105px;
+    border-radius: 1.1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-countdown-box {
+    width: 110px;
+    height: 118px;
+    border-radius: 1.25rem;
+  }
+}
+
+.hero-countdown-box:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.6);
+}
+
+.hero-countdown-num {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 640px) {
+  .hero-countdown-num {
+    font-size: 2.35rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-countdown-num {
+    font-size: 2.75rem;
+  }
+}
+
+.hero-countdown-txt {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #94a3b8;
+  font-weight: 700;
+  margin-top: 0.35rem;
 }
 
 /* ==========================================================================
@@ -1356,7 +1588,7 @@ body {
 }
 
 /* ==========================================================================
-   SECTION 5: MAP / ĐỊA ĐIỂM TỔ CHỨC
+   SECTION 5: MAP / BẢN ĐỒ CHỈ ĐƯỜNG
    ========================================================================== */
 .map-section {
   padding: 3.5rem 1rem;
@@ -1488,135 +1720,7 @@ body {
 }
 
 /* ==========================================================================
-   SECTION 6: COUNTDOWN
-   ========================================================================== */
-.countdown-section {
-  padding: 3.5rem 1rem;
-  position: relative;
-  text-align: center;
-}
-
-@media (min-width: 768px) {
-  .countdown-section {
-    padding: 4.5rem 1.5rem;
-  }
-}
-
-.countdown-box-card {
-  background: rgba(11, 13, 19, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 2.25rem;
-  padding: 2.75rem 1.5rem;
-  max-width: 900px;
-  margin: 0 auto;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(12px);
-}
-
-@media (min-width: 768px) {
-  .countdown-box-card {
-    padding: 3.75rem 3.5rem;
-  }
-}
-
-.countdown-grid {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.95rem;
-  margin-top: 2rem;
-}
-
-@media (min-width: 640px) {
-  .countdown-grid {
-    gap: 1.85rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .countdown-grid {
-    gap: 2.5rem;
-  }
-}
-
-.countdown-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.countdown-card {
-  position: relative;
-  width: 72px;
-  height: 90px;
-  border-radius: 1rem;
-  background: rgba(8, 10, 15, 0.95);
-  border: 1px solid rgba(0, 84, 166, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  overflow: hidden;
-}
-
-@media (min-width: 640px) {
-  .countdown-card {
-    width: 105px;
-    height: 120px;
-    border-radius: 1.35rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .countdown-card {
-    width: 130px;
-    height: 145px;
-    border-radius: 1.5rem;
-  }
-}
-
-.countdown-card::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.65);
-  z-index: 3;
-}
-
-.countdown-number {
-  font-size: 2rem;
-  font-weight: 800;
-  font-family: var(--font-heading);
-  color: #fff;
-  letter-spacing: -0.02em;
-}
-
-@media (min-width: 640px) {
-  .countdown-number {
-    font-size: 3rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .countdown-number {
-    font-size: 3.8rem;
-  }
-}
-
-.countdown-label {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--text-dim);
-  font-weight: 700;
-  margin-top: 0.85rem;
-}
-
-/* ==========================================================================
-   SECTION 7: RSVP (CHUẨN XÁC 100% THEO ẢNH 4 - XANH LÁ & ĐỎ)
+   SECTION 6: RSVP (CHUẨN XÁC 100% THEO ẢNH 4 - XANH LÁ & ĐỎ)
    ========================================================================== */
 .rsvp-section {
   padding: 3.5rem 1rem 5rem;

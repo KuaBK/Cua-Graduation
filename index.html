@@ -44,7 +44,7 @@
         </div>
         <div class="envelope-school-tag">TRƯỜNG ĐẠI HỌC BÁCH KHOA • ĐHQG-HCM</div>
         <h1 class="envelope-intro-title font-serif">Bạn có một thiệp mời đặc biệt</h1>
-        <p class="envelope-intro-sub">Nhấn vào con dấu sáp vàng hoàng gia để mở phong bì và khám phá thiệp mời.</p>
+        <p class="envelope-intro-sub">Nhấn vào con dấu sáp vàng hoàng gia để mở phong bì.</p>
       </div>
 
       <!-- 3D Realistic Royal BK Envelope -->
@@ -65,9 +65,14 @@
 
             <div class="letter-footer-area">
               <button id="letter-open-btn" class="letter-open-btn">
-                <span>Mở Toàn Bộ Thiệp</span>
+                <span>Vào Xem Thiệp Mời</span>
                 <span class="sparkle-symbol">✦</span>
               </button>
+              <!-- Thông báo tự động vào sau 3-5s -->
+              <div class="letter-auto-timer">
+                <span class="auto-pulse-dot"></span>
+                <span>Tự động mở thiệp sau <strong id="auto-seconds">3</strong>s</span>
+              </div>
               <span class="letter-hint-tag">TÂN CỬ NHÂN NGUYỄN TUẤN PHONG</span>
             </div>
           </div>
@@ -105,7 +110,7 @@
   <canvas id="confetti-canvas"></canvas>
 
   <!-- =========================================================================
-       3. NÚT LOA BẬT/TẮT NHẠC NỀN (GÓC PHẢI DƯỚI MÀN HÌNH - ẢNH 2)
+       3. NÚT LOA BẬT/TẮT NHẠC NỀN (GÓC PHẢI DƯỚI MÀN HÌNH - ẢNH 1)
        ========================================================================= -->
   <button id="music-toggle-btn" class="music-toggle-btn" title="Bật nhạc nền" aria-label="Bật/Tắt nhạc nền">
     <div class="music-icon-wrap">
@@ -148,7 +153,7 @@
       </div>
     </section>
 
-    <!-- SECTION 2: HERO ROYAL (LỄ TỐT NGHIỆP VINH DANH - TO & RỘNG RÃI THEO ẢNH 1 & ẢNH 2) -->
+    <!-- SECTION 2: HERO ROYAL (GỘP ĐẾM NGƯỢC & ĐỊA ĐIỂM VÀO THẺ NÀY — CHUẨN XÁC 100% THEO ẢNH 2) -->
     <section class="hero-royal-section">
       <div class="container-royal">
         <div class="royal-card-container">
@@ -157,9 +162,10 @@
             <div class="royal-badge">✦ LỄ TỐT NGHIỆP VINH DANH ✦</div>
           </div>
           
+          <div class="card-intro-label">Tốt Nghiệp của</div>
           <!-- Graduate Name (To lớn và rộng hơn trên laptop/PC) -->
           <h1 class="royal-graduate-name text-gold-gradient font-serif">Nguyễn Tuấn Phong</h1>
-          <div class="royal-divider-line"></div>
+          <div class="card-degree-badge">CỬ NHÂN • KHOA HỌC MÁY TÍNH</div>
 
           <!-- Invitation Text -->
           <p class="royal-invitation-body">
@@ -168,31 +174,78 @@
             <strong class="text-amber-400 font-bold">Đại Học Bách Khoa ĐHQG TPHCM</strong>.
           </p>
 
-          <!-- Graduate Quote with Amber Left Bar (Ảnh 2) -->
+          <!-- Graduate Quote with Amber Left Bar (Ảnh 1) -->
           <div class="quote-wrapper">
             <div class="royal-quote-box">
               &ldquo;Chặng đường gian nan sẽ tạo nên những quả ngọt rực rỡ.&rdquo;
             </div>
           </div>
 
-          <!-- Date & Time Info (Ảnh 2) -->
-          <div class="event-time-pill-wrap">
-            <div class="event-pills-row">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400">
-                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" x2="21" y1="10" y2="10"></line>
+          <!-- Cap Divider with Sparkle (Chuẩn theo Ảnh 2) -->
+          <div class="royal-cap-divider">
+            <span class="divider-sparkle">✦</span>
+            <div class="divider-line"></div>
+            <div class="divider-cap-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path>
+                <path d="M22 10v6"></path>
+                <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path>
               </svg>
-              <span class="event-date-text">28/11/2026</span>
-              <span class="event-pipe-separator">|</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              <span class="event-time-text">16:30</span>
+            </div>
+            <div class="divider-line"></div>
+          </div>
+
+          <!-- 3-Column Info: THỜI GIAN | THỨ BẢY 28 THÁNG 11 2026 | ĐỊA ĐIỂM (Chuẩn theo Ảnh 2) -->
+          <div class="event-info-triplet">
+            <!-- Col 1: THỜI GIAN -->
+            <div class="triplet-col time-col">
+              <span class="triplet-label">THỜI GIAN</span>
+              <h3 class="triplet-value font-serif">16:30 chiều</h3>
+              <p class="triplet-subtext">Nếu có việc, bạn có thể linh động thời gian từ 16:30 đến 18:00</p>
+            </div>
+
+            <!-- Col 2: THỨ BẢY - 28 - THÁNG 11 • 2026 (Center) -->
+            <div class="triplet-col date-col">
+              <span class="triplet-label">THỨ BẢY</span>
+              <div class="triplet-giant-day font-serif">28</div>
+              <span class="triplet-label date-bottom">THÁNG 11 • 2026</span>
+            </div>
+
+            <!-- Col 3: ĐỊA ĐIỂM -->
+            <div class="triplet-col venue-col">
+              <span class="triplet-label">ĐỊA ĐIỂM</span>
+              <h3 class="triplet-value font-serif">ĐH Bách Khoa</h3>
+              <p class="triplet-subtext">268 Lý Thường Kiệt, Phường 14, Quận 10, TP. Hồ Chí Minh</p>
             </div>
           </div>
+
+          <!-- Countdown Block gộp trực tiếp vào ô này (Chuẩn theo Ảnh 2) -->
+          <div class="hero-countdown-block">
+            <p class="countdown-heading-sub">Còn lại đến giờ hẹn</p>
+            <div class="hero-countdown-grid">
+              <!-- Ngày -->
+              <div class="hero-countdown-box">
+                <span id="countdown-days" class="hero-countdown-num font-serif">00</span>
+                <span class="hero-countdown-txt">NGÀY</span>
+              </div>
+              <!-- Giờ -->
+              <div class="hero-countdown-box">
+                <span id="countdown-hours" class="hero-countdown-num font-serif">00</span>
+                <span class="hero-countdown-txt">GIỜ</span>
+              </div>
+              <!-- Phút -->
+              <div class="hero-countdown-box">
+                <span id="countdown-minutes" class="hero-countdown-num font-serif">00</span>
+                <span class="hero-countdown-txt">PHÚT</span>
+              </div>
+              <!-- Giây -->
+              <div class="hero-countdown-box">
+                <span id="countdown-seconds" class="hero-countdown-num font-serif">00</span>
+                <span class="hero-countdown-txt">GIÂY</span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -259,7 +312,7 @@
       </div>
     </section>
 
-    <!-- SECTION 5: MAP / ĐỊA ĐIỂM (RỘNG RÃI TRÊN LAPTOP / PC) -->
+    <!-- SECTION 5: MAP / BẢN ĐỒ CHỈ ĐƯỜNG (RỘNG RÃI TRÊN LAPTOP / PC) -->
     <section class="map-section" id="location">
       <div class="container-wide">
         <div class="map-card-container">
@@ -312,54 +365,7 @@
       </div>
     </section>
 
-    <!-- SECTION 6: COUNTDOWN (ĐẾM NGƯỢC - TO VÀ RỘNG RÃI TRÊN LAPTOP / PC) -->
-    <section class="countdown-section">
-      <div class="container-medium">
-        <div class="countdown-box-card">
-          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-sky-400" style="margin: 0 auto 0.85rem;">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          <h2 class="section-title">Đếm Ngược Đến Ngày Trọng Đại</h2>
-
-          <div class="countdown-grid">
-            <!-- Ngày -->
-            <div class="countdown-box">
-              <div class="countdown-card">
-                <span id="countdown-days" class="countdown-number">00</span>
-              </div>
-              <span class="countdown-label">Ngày</span>
-            </div>
-
-            <!-- Giờ -->
-            <div class="countdown-box">
-              <div class="countdown-card">
-                <span id="countdown-hours" class="countdown-number">00</span>
-              </div>
-              <span class="countdown-label">Giờ</span>
-            </div>
-
-            <!-- Phút -->
-            <div class="countdown-box">
-              <div class="countdown-card">
-                <span id="countdown-minutes" class="countdown-number">00</span>
-              </div>
-              <span class="countdown-label">Phút</span>
-            </div>
-
-            <!-- Giây -->
-            <div class="countdown-box">
-              <div class="countdown-card">
-                <span id="countdown-seconds" class="countdown-number">00</span>
-              </div>
-              <span class="countdown-label">Giây</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 7: RSVP (CHÍNH XÁC THEO ẢNH 4 - XANH LÁ & ĐỎ) -->
+    <!-- SECTION 6: RSVP (CHÍNH XÁC THEO ẢNH 4 - XANH LÁ & ĐỎ) -->
     <section class="rsvp-section" id="rsvp">
       <div class="container-narrow">
         <div class="rsvp-card-image4">
