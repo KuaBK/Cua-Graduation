@@ -3,3 +3,4 @@ server.py
 .env.*
 scripts/
 *.log
+
