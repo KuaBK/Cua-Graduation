@@ -56,3 +56,4 @@ class handler(BaseHTTPRequestHandler):
             self.send_json({"success": True, "tracked": True})
         except Exception as e:
             self.send_json({"success": False, "error": str(e)})
+

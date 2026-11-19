@@ -106,3 +106,4 @@ class handler(BaseHTTPRequestHandler):
             }, 201)
         except Exception as e:
             self.send_json({"error": str(e)}, 500)
+
