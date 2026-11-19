@@ -1,7 +1,8 @@
 /**
  * Thiệp Mời Tốt Nghiệp — Nguyễn Tuấn Phong
  * Phiên bản Đại học Bách Khoa TP.HCM (HCMUT)
- * Xử lý mở thư 3D tự động sau 3-5s, khóa cuộn trang triệt để, nhạc nền YouTube, pháo hoa rơi liên tục & RSVP
+ * Xử lý: Nhập tên lần đầu (lưu cookie & localStorage), xưng hô theo tên, mở thư tự động 3.5s,
+ * khóa cuộn triệt để, nhạc nền YouTube, pháo hoa rơi liên tục & RSVP tinh gọn
  */
 
 (function () {
@@ -109,16 +110,110 @@
     }
   ];
 
-  // Tùy biến người nhận từ tham số URL (?name=... hoặc ?to=...)
-  const urlParams = new URLSearchParams(window.location.search);
-  const customGuest = urlParams.get('name') || urlParams.get('to') || urlParams.get('guest');
-  if (customGuest) {
+  // =========================================================================
+  // 2. QUẢN LÝ TÊN KHÁCH MỜI (LƯU COOKIE & LOCALSTORAGE, XƯNG HÔ THEO TÊN)
+  // =========================================================================
+  const guestNameModal = document.getElementById('guest-name-modal');
+  const guestNameForm = document.getElementById('guest-name-form');
+  const guestNameInput = document.getElementById('guest-name-input');
+  const rsvpEditNameBtn = document.getElementById('rsvp-edit-name-btn');
+
+  function getStoredGuestName() {
+    // 1. Kiểm tra tham số URL (?name=... / ?to=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramName = urlParams.get('name') || urlParams.get('to') || urlParams.get('guest');
+    if (paramName && paramName.trim()) {
+      saveGuestName(paramName.trim());
+      return paramName.trim();
+    }
+
+    // 2. Kiểm tra localStorage
+    const localName = localStorage.getItem('graduation_guest_name');
+    if (localName && localName.trim()) {
+      return localName.trim();
+    }
+
+    // 3. Kiểm tra Cookie
+    const cookies = document.cookie.split(';');
+    for (let c of cookies) {
+      const parts = c.trim().split('=');
+      if (parts[0] === 'graduation_guest_name' && parts[1]) {
+        try {
+          const val = decodeURIComponent(parts[1]).trim();
+          if (val) {
+            localStorage.setItem('graduation_guest_name', val);
+            return val;
+          }
+        } catch (e) { }
+      }
+    }
+
+    return null;
+  }
+
+  function saveGuestName(name) {
+    if (!name || !name.trim()) return;
+    const cleanName = name.trim();
+    localStorage.setItem('graduation_guest_name', cleanName);
+    // Lưu cookie trong 1 năm
+    document.cookie = `graduation_guest_name=${encodeURIComponent(cleanName)}; max-age=31536000; path=/; SameSite=Lax`;
+    updateGuestNameDOM(cleanName);
+  }
+
+  function updateGuestNameDOM(name) {
+    if (!name) return;
     const guestElements = document.querySelectorAll('.dynamic-guest-name');
-    guestElements.forEach(el => el.textContent = customGuest);
+    guestElements.forEach(el => el.textContent = name);
+  }
+
+  function showGuestNameModal(prefillName = '') {
+    if (!guestNameModal) return;
+    if (guestNameInput) {
+      guestNameInput.value = prefillName;
+    }
+    guestNameModal.classList.add('show');
+    setTimeout(() => {
+      if (guestNameInput) guestNameInput.focus();
+    }, 200);
+  }
+
+  function hideGuestNameModal() {
+    if (!guestNameModal) return;
+    guestNameModal.classList.remove('show');
+  }
+
+  // Khởi tạo kiểm tra tên người dùng
+  const existingGuestName = getStoredGuestName();
+  if (existingGuestName) {
+    updateGuestNameDOM(existingGuestName);
+  } else {
+    // Nếu chưa có tên lưu, bắt buộc nhập tên ngay khi vừa vào trang
+    showGuestNameModal();
+  }
+
+  if (guestNameForm) {
+    guestNameForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const enteredName = guestNameInput ? guestNameInput.value.trim() : '';
+      if (!enteredName) {
+        if (guestNameInput) guestNameInput.focus();
+        return;
+      }
+      saveGuestName(enteredName);
+      hideGuestNameModal();
+      showToast(`✓ Chào mừng ${enteredName} đến với thiệp mời!`);
+    });
+  }
+
+  if (rsvpEditNameBtn) {
+    rsvpEditNameBtn.addEventListener('click', function () {
+      const current = getStoredGuestName() || '';
+      showGuestNameModal(current);
+    });
   }
 
   // =========================================================================
-  // 2. KHÓA CUỘN TRANG TRIỆT ĐỂ KHI CHƯA MỞ PHONG BÌ (FIX 100% LỖI CUỘN ĐƯỢC)
+  // 3. KHÓA CUỘN TRANG TRIỆT ĐỂ KHI CHƯA MỞ PHONG BÌ (FIX 100% LỖI CUỘN ĐƯỢC)
   // =========================================================================
   function isEnvelopeOpen() {
     const overlay = document.getElementById('envelope-overlay');
@@ -152,7 +247,7 @@
   document.body.classList.add('envelope-active');
 
   // =========================================================================
-  // 3. YOUTUBE MUSIC CONTROLLER (Video ID: b-FHfiM8ILo)
+  // 4. YOUTUBE MUSIC CONTROLLER (Video ID: b-FHfiM8ILo)
   // =========================================================================
   let ytPlayer = null;
   let isPlaying = false;
@@ -248,7 +343,7 @@
   }
 
   // =========================================================================
-  // 4. HIỆU ỨNG MỞ PHONG BÌ 3D HOÀNG GIA: TỰ ĐỘNG VÀO SAU 3.5S (KHÔNG CẦN BẤM THÊM)
+  // 5. HIỆU ỨNG MỞ PHONG BÌ 3D HOÀNG GIA: TỰ ĐỘNG VÀO SAU 3.5S (KHÔNG CẦN BẤM THÊM)
   // =========================================================================
   const envelopeOverlay = document.getElementById('envelope-overlay');
   const envelopeScene = document.getElementById('envelope-scene');
@@ -375,7 +470,7 @@
   }
 
   // =========================================================================
-  // 5. RENDER GALLERY POLAROID (TO HƠN RÕ RỆT TRÊN LAPTOP / PC)
+  // 6. RENDER GALLERY POLAROID (TO HƠN RÕ RỆT TRÊN LAPTOP / PC)
   // =========================================================================
   const galleryGrid = document.getElementById('gallery-grid');
   const angles = [-2.5, 1.8, -1.2, 2.5, -1.8, 1.2, 2, -2, 1.5, -1.5, 2.2, -2.2, 1.6, -1.2, 1.8, -1.8];
@@ -406,7 +501,7 @@
   renderGallery();
 
   // =========================================================================
-  // 6. LIGHTBOX MODAL
+  // 7. LIGHTBOX MODAL
   // =========================================================================
   const lightboxOverlay = document.getElementById('lightbox-overlay');
   const lightboxImg = document.getElementById('lightbox-img');
@@ -485,7 +580,7 @@
   });
 
   // =========================================================================
-  // 7. ĐẾM NGƯỢC THỜI GIAN (COUNTDOWN GỘP TRONG THẺ VINH DANH)
+  // 8. ĐẾM NGƯỢC THỜI GIAN (COUNTDOWN GỘP TRONG THẺ VINH DANH)
   // =========================================================================
   const TARGET_DATE = new Date('2026-11-28T16:30:00+07:00').getTime();
 
@@ -521,7 +616,7 @@
   setInterval(updateCountdown, 1000);
 
   // =========================================================================
-  // 8. BẢN ĐỒ & SAO CHÉP ĐỊA CHỈ
+  // 9. BẢN ĐỒ & SAO CHÉP ĐỊA CHỈ
   // =========================================================================
   const copyAddressBtn = document.getElementById('copy-address-btn');
   const toastMsg = document.getElementById('toast-msg');
@@ -561,7 +656,7 @@
   }
 
   // =========================================================================
-  // 9. FORM RSVP (XANH LÁ & ĐỎ CHUẨN XÁC THEO ẢNH 4)
+  // 10. FORM RSVP (ĐÃ BỎ NHẬP HỌ TÊN VÀ SĐT - GỬI THEO TÊN ĐÃ LƯU)
   // =========================================================================
   const rsvpForm = document.getElementById('rsvp-form');
   const rsvpSuccess = document.getElementById('rsvp-success');
@@ -613,7 +708,7 @@
       if (rsvpSuccess && rsvpForm) {
         rsvpForm.style.display = 'none';
         rsvpSuccess.style.display = 'block';
-        document.getElementById('rsvp-success-name').textContent = data.name || 'Quý khách';
+        updateGuestNameDOM(data.name || existingGuestName || 'Quý khách');
       }
     } catch (e) { }
   }
@@ -622,14 +717,12 @@
     rsvpForm.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const nameInput = document.getElementById('rsvp-name');
-      const phoneInput = document.getElementById('rsvp-phone');
       const wishInput = document.getElementById('rsvp-wish');
       const submitBtn = document.getElementById('rsvp-submit-btn');
+      const currentName = getStoredGuestName() || 'Quý khách';
 
       const rsvpData = {
-        name: nameInput ? nameInput.value.trim() : '',
-        phone: phoneInput ? phoneInput.value.trim() : '',
+        name: currentName,
         status: attendanceInput ? attendanceInput.value : 'attend',
         wish: wishInput ? wishInput.value.trim() : '',
         timestamp: new Date().toISOString()
@@ -650,14 +743,14 @@
         if (rsvpForm) rsvpForm.style.display = 'none';
         if (rsvpSuccess) {
           rsvpSuccess.style.display = 'block';
-          document.getElementById('rsvp-success-name').textContent = rsvpData.name || 'Quý khách';
+          updateGuestNameDOM(currentName);
         }
       }, 700);
     });
   }
 
   // =========================================================================
-  // 10. HIỆU ỨNG PHÁO HOA RƠI XUỐNG LIÊN TỤC (ẢNH 1 & 2) + PHÁO HOA NỔ
+  // 11. HIỆU ỨNG PHÁO HOA RƠI XUỐNG LIÊN TỤC (ẢNH 1 & 2) + PHÁO HOA NỔ
   // =========================================================================
   const canvas = document.getElementById('confetti-canvas');
   let ctx = null;

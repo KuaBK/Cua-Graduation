@@ -25,6 +25,39 @@
 <body class="envelope-active">
 
   <!-- =========================================================================
+       0. MODAL NHẬP TÊN LẦN ĐẦU TIÊN (LƯU VÀO COOKIE & LOCALSTORAGE)
+       ========================================================================= -->
+  <div id="guest-name-modal" class="guest-name-modal">
+    <div class="guest-name-card">
+      <div class="cap-badge-icon" style="margin: 0 auto;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path>
+          <path d="M22 10v6"></path>
+          <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path>
+        </svg>
+      </div>
+      <div class="guest-name-school-tag">TRƯỜNG ĐẠI HỌC BÁCH KHOA • ĐHQG-HCM</div>
+      <h2 class="guest-name-title font-serif">Chào mừng bạn!</h2>
+      <p class="guest-name-sub">Vui lòng nhập tên của bạn để tân cử nhân gửi thiệp mời trân trọng nhất:</p>
+
+      <form id="guest-name-form" class="guest-name-form">
+        <input 
+          type="text" 
+          id="guest-name-input" 
+          class="guest-name-input" 
+          placeholder="Nhập tên của bạn (VD: Minh Tuấn, Lan Anh...)" 
+          autocomplete="name" 
+          required 
+          maxlength="50"
+        >
+        <button type="submit" id="guest-name-submit-btn" class="guest-name-submit-btn">
+          <span>Tiếp Tục Mở Thiệp ✦</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
        1. PHONG BÌ MỞ THIỆP (ENVELOPE INTRO MODAL - 3D XANH BÁCH KHOA HOÀNG GIA)
        ========================================================================= -->
   <div id="envelope-overlay" class="envelope-overlay">
@@ -68,7 +101,7 @@
                 <span>Vào Xem Thiệp Mời</span>
                 <span class="sparkle-symbol">✦</span>
               </button>
-              <!-- Thông báo tự động vào sau 3-5s -->
+              <!-- Thông báo tự động vào sau 3.5s -->
               <div class="letter-auto-timer">
                 <span class="auto-pulse-dot"></span>
                 <span>Tự động mở thiệp sau <strong id="auto-seconds">3</strong>s</span>
@@ -136,15 +169,16 @@
        ========================================================================= -->
   <div class="site-wrapper" id="site-wrapper">
 
-    <!-- SECTION 1: HERO INTRO (LỜI MỞ ĐẦU) -->
+    <!-- SECTION 1: HERO INTRO (LỜI MỞ ĐẦU - XƯNG HÔ BẰNG TÊN NGƯỜI DÙNG) -->
     <section class="hero-intro-section">
       <div class="container-medium">
         <div class="intro-letter-card">
           <span class="badge-pill-subtle">✦ Thư mời trân trọng ✦</span>
           <p class="intro-letter-text">
-            &ldquo;Sau quãng thời gian nỗ lực học tập dưới mái trường 
+            &ldquo;Thân gửi <span class="dynamic-guest-name text-sky-400 font-bold" style="font-style: normal;">bạn</span>, sau quãng thời gian nỗ lực học tập dưới mái trường 
             <span class="text-bk-gradient font-bold" style="font-style: normal;">Đại Học Bách Khoa</span>, 
-            chặng đường sinh viên đầy kỷ niệm của mình chuẩn bị khép lại để mở ra một chương mới. Mình rất muốn bạn sẽ là người cùng chứng kiến và chia sẻ khoảnh khắc nhận bằng tốt nghiệp ý nghĩa này cùng mình...&rdquo;
+            chặng đường sinh viên đầy kỷ niệm của mình chuẩn bị khép lại để mở ra một chương mới. Mình rất muốn 
+            <span class="dynamic-guest-name text-sky-400 font-bold" style="font-style: normal;">bạn</span> sẽ là người cùng chứng kiến và chia sẻ khoảnh khắc nhận bằng tốt nghiệp ý nghĩa này cùng mình...&rdquo;
           </p>
           <p class="intro-sub-text">
             Chặng đường sinh viên đầy kỷ niệm của mình chuẩn bị khép lại để mở ra một chương mới... đầy vinh quang và tự hào cùng gia đình.
@@ -153,7 +187,7 @@
       </div>
     </section>
 
-    <!-- SECTION 2: HERO ROYAL (GỘP ĐẾM NGƯỢC & ĐỊA ĐIỂM VÀO THẺ NÀY — CHUẨN XÁC 100% THEO ẢNH 2) -->
+    <!-- SECTION 2: HERO ROYAL (GỘP ĐẾM NGƯỢC & ĐỊA ĐIỂM VÀO ĐÂY — CHUẨN XÁC 100% THEO ẢNH 2) -->
     <section class="hero-royal-section">
       <div class="container-royal">
         <div class="royal-card-container">
@@ -167,9 +201,9 @@
           <h1 class="royal-graduate-name text-gold-gradient font-serif">Nguyễn Tuấn Phong</h1>
           <div class="card-degree-badge">CỬ NHÂN • KHOA HỌC MÁY TÍNH</div>
 
-          <!-- Invitation Text -->
+          <!-- Invitation Text với xưng hô theo tên -->
           <p class="royal-invitation-body">
-            Trân trọng kính mời <span class="dynamic-guest-name font-semibold text-white">Quý khách</span> tới tham dự buổi lễ tốt nghiệp cử nhân ngành 
+            Trân trọng kính mời <span class="dynamic-guest-name font-bold text-amber-300">Quý khách</span> tới tham dự buổi lễ tốt nghiệp cử nhân ngành 
             <strong class="text-white font-bold">khoa học máy tính</strong> của tân cử nhân tại trường 
             <strong class="text-amber-400 font-bold">Đại Học Bách Khoa ĐHQG TPHCM</strong>.
           </p>
@@ -365,12 +399,21 @@
       </div>
     </section>
 
-    <!-- SECTION 6: RSVP (CHÍNH XÁC THEO ẢNH 4 - XANH LÁ & ĐỎ) -->
+    <!-- SECTION 6: RSVP (ĐÃ BỎ NHẬP HỌ TÊN VÀ SỐ ĐIỆN THOẠI - GỬI THEO TÊN ĐÃ LƯU) -->
     <section class="rsvp-section" id="rsvp">
       <div class="container-narrow">
         <div class="rsvp-card-image4">
           <h2 class="rsvp-title-blue">Xác Nhận Tham Dự (RSVP)</h2>
           <p class="rsvp-subtitle-muted">Xin vui lòng phản hồi trước ngày tổ chức lễ.</p>
+
+          <!-- Hiển thị người gửi theo tên đã lưu -->
+          <div class="rsvp-sender-badge">
+            <div class="rsvp-sender-pill">
+              <span class="rsvp-sender-icon">✍️</span>
+              <span>Lời chúc từ: <strong class="dynamic-guest-name text-sky-400 font-bold">Bạn</strong></span>
+              <button type="button" id="rsvp-edit-name-btn" class="rsvp-edit-name-btn" title="Đổi tên của bạn">(Đổi tên)</button>
+            </div>
+          </div>
 
           <!-- Success State -->
           <div id="rsvp-success" class="rsvp-success-card">
@@ -379,24 +422,12 @@
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </div>
-            <h3 class="rsvp-success-title">Cảm ơn <span id="rsvp-success-name">bạn</span> đã phản hồi tham gia!</h3>
+            <h3 class="rsvp-success-title">Cảm ơn <span class="dynamic-guest-name text-amber-300">bạn</span> đã phản hồi tham gia!</h3>
             <p class="rsvp-success-desc">Rất mong được gặp và chia sẻ khoảnh khắc vinh quang này cùng bạn tại Trường Đại học Bách Khoa.</p>
           </div>
 
-          <!-- RSVP Form as in Image 4 -->
+          <!-- RSVP Form (Đã bỏ Họ tên & Số điện thoại) -->
           <form id="rsvp-form">
-            <!-- HỌ VÀ TÊN * -->
-            <div class="rsvp-form-group-image4">
-              <label for="rsvp-name" class="rsvp-label-image4">HỌ VÀ TÊN <span class="text-red-500">*</span></label>
-              <input type="text" id="rsvp-name" class="rsvp-input-image4" required placeholder="Nguyễn Văn A">
-            </div>
-
-            <!-- SỐ ĐIỆN THOẠI -->
-            <div class="rsvp-form-group-image4">
-              <label for="rsvp-phone" class="rsvp-label-image4">SỐ ĐIỆN THOẠI</label>
-              <input type="tel" id="rsvp-phone" class="rsvp-input-image4" placeholder="0901234567">
-            </div>
-
             <!-- BẠN SẼ THAM DỰ CHỨ? (Xanh lá & Đỏ theo Ảnh 4) -->
             <div class="rsvp-form-group-image4">
               <label class="rsvp-label-image4">BẠN SẼ THAM DỰ CHỨ?</label>
