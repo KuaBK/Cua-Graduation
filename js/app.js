@@ -250,6 +250,10 @@
 
   function preventScrollHandler(e) {
     if (!isEnvelopeOpen()) {
+      const target = e.target;
+      if (target && target.closest && target.closest('#guest-name-modal')) {
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
       return false;
@@ -257,9 +261,14 @@
   }
 
   function preventKeyScrollHandler(e) {
+    const target = e.target;
+    // Không chặn phím khi người dùng đang nhập họ tên hoặc gõ trong ô văn bản
+    if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+      return;
+    }
     if (!isEnvelopeOpen()) {
       // Chặn các phím cuộn: Space (32), PageUp (33), PageDown (34), End (35), Home (36), Arrows (37-40)
-      if ([32, 33, 34, 35, 36, 37, 38, 39, 40].includes(e.keyCode)) {
+      if ([32, 33, 34, 35, 36, 37, 38, 39, 40].includes(e.keyCode || e.which)) {
         e.preventDefault();
         return false;
       }
@@ -275,52 +284,54 @@
   document.body.classList.add('envelope-active');
 
   // =========================================================================
-  // 4. YOUTUBE MUSIC CONTROLLER (Video ID: b-FHfiM8ILo)
+  // 4. BACKGROUND MUSIC CONTROLLER (HTML5 Native Audio - Không redirect app YouTube)
   // =========================================================================
-  let ytPlayer = null;
   let isPlaying = false;
 
   const musicToggleBtn = document.getElementById('music-toggle-btn');
-  const ytIframe = document.getElementById('youtube-bg-player');
+  const bgAudio = document.getElementById('bg-music');
 
-  window.onYouTubeIframeAPIReady = function () {
-    ytPlayer = new YT.Player('youtube-bg-player', {
-      events: {
-        'onStateChange': onPlayerStateChange
-      }
-    });
-  };
-
-  function onPlayerStateChange(event) {
-    if (event.data === 1) { // Đang phát
+  if (bgAudio) {
+    bgAudio.addEventListener('play', () => {
+      isPlaying = true;
       setMusicUIState(true);
-    } else if (event.data === 2 || event.data === 0) { // Tạm dừng hoặc hết
+    });
+    bgAudio.addEventListener('pause', () => {
+      isPlaying = false;
       setMusicUIState(false);
-    }
+    });
+    bgAudio.addEventListener('ended', () => {
+      bgAudio.currentTime = 0;
+      bgAudio.play().catch(() => {});
+    });
   }
 
   function playMusic() {
-    isPlaying = true;
-    setMusicUIState(true);
-    if (ytPlayer && ytPlayer.playVideo) {
-      try { ytPlayer.playVideo(); } catch (e) { }
-    } else if (ytIframe && ytIframe.contentWindow) {
-      ytIframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
+    if (!bgAudio) return;
+    const playPromise = bgAudio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          isPlaying = true;
+          setMusicUIState(true);
+        })
+        .catch(err => {
+          console.warn('Audio play prevented or error:', err);
+          isPlaying = false;
+          setMusicUIState(false);
+        });
     }
   }
 
   function pauseMusic() {
+    if (!bgAudio) return;
+    bgAudio.pause();
     isPlaying = false;
     setMusicUIState(false);
-    if (ytPlayer && ytPlayer.pauseVideo) {
-      try { ytPlayer.pauseVideo(); } catch (e) { }
-    } else if (ytIframe && ytIframe.contentWindow) {
-      ytIframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo' }), '*');
-    }
   }
 
   function toggleMusic() {
-    if (isPlaying) {
+    if (bgAudio && !bgAudio.paused) {
       pauseMusic();
     } else {
       playMusic();
