@@ -1,13 +1,3 @@
 {
-  "functions": {
-    "api/app.py": {
-      "includeFiles": "index.html,css/**,js/**,images/**"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/app.py"
-    }
-  ]
+  "cleanUrls": true
 }

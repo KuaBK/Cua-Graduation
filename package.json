@@ -1,0 +1,24 @@
+{
+  "name": "graduation",
+  "version": "1.0.0",
+  "description": "Website thiệp mời tốt nghiệp trực tuyến thông minh, hiện đại, tối ưu tuyệt đối cho thiết bị di động và máy tính, được xây dựng lại dựa trên bản thiết kế gốc từ `thieptotnghiep.com`.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KuaBK/Cua-Graduation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/KuaBK/Cua-Graduation/issues"
+  },
+  "homepage": "https://github.com/KuaBK/Cua-Graduation#readme",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.1"
+  }
+}
