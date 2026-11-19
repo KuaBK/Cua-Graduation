@@ -490,7 +490,9 @@
         <div class="polaroid-img-box">
           <img src="${item.local}" alt="${item.caption}" loading="lazy" onerror="this.onerror=null;this.src='${item.remote}';">
         </div>
-        <div class="polaroid-caption" title="${item.caption}">${item.caption}</div>
+        <div class="polaroid-caption-wrap">
+          <span class="polaroid-caption" title="${item.caption}">${item.caption}</span>
+        </div>
       `;
 
       card.addEventListener('click', () => openLightbox(idx));
