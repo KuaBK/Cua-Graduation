@@ -166,9 +166,9 @@
     guestElements.forEach(el => el.textContent = name);
 
     // Điền sẵn tên vào ô "Tên của bạn" trong Sổ lưu bút & RSVP
-    const wishAuthorInput = document.getElementById('unified-guest-name') || document.getElementById('wish-author');
-    if (wishAuthorInput && (!wishAuthorInput.value || wishAuthorInput.value === 'Bạn')) {
-      wishAuthorInput.value = name;
+    const nameField = document.getElementById('unified-guest-name') || document.getElementById('wish-author');
+    if (nameField) {
+      nameField.value = name;
     }
   }
 
@@ -705,7 +705,6 @@
   const wishCharCount = document.getElementById('wish-char-count');
   const unifiedSubmitBtn = document.getElementById('unified-submit-btn');
   const unifiedSuccessBanner = document.getElementById('unified-success-banner');
-  const guestbookEditNameBtn = document.getElementById('guestbook-edit-name-btn');
   const btnAttend = document.getElementById('btn-attend');
   const btnDecline = document.getElementById('btn-decline');
   const attendanceInput = document.getElementById('attendance-value');
@@ -717,16 +716,15 @@
     const storedName = getStoredGuestName();
     if (storedName) unifiedNameInput.value = storedName;
 
+    unifiedNameInput.addEventListener('input', function () {
+      if (this.classList.contains('input-error')) {
+        this.classList.remove('input-error');
+      }
+    });
+
     unifiedNameInput.addEventListener('change', function () {
       const val = this.value.trim();
       if (val) saveGuestName(val);
-    });
-  }
-
-  if (guestbookEditNameBtn) {
-    guestbookEditNameBtn.addEventListener('click', function () {
-      const current = getStoredGuestName() || '';
-      showGuestNameModal(current);
     });
   }
 
@@ -905,8 +903,12 @@
       const attendance = attendanceInput ? attendanceInput.value : 'attend';
 
       if (!name) {
-        showToast('⚠️ Vui lòng nhập tên của bạn');
-        if (unifiedNameInput) unifiedNameInput.focus();
+        if (unifiedNameInput) {
+          unifiedNameInput.classList.add('input-error');
+          unifiedNameInput.focus();
+          setTimeout(() => unifiedNameInput.classList.remove('input-error'), 1800);
+        }
+        showToast('⚠️ Tên không được để trống! Vui lòng nhập tên của bạn.');
         return;
       }
 

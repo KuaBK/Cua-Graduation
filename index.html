@@ -444,20 +444,11 @@
         <div class="guestbook-unified-grid">
           <!-- CỘT TRÁI: FORM GỘP XÁC NHẬN THAM DỰ & GỬI LỜI CHÚC -->
           <div class="guestbook-form-card">
-            <!-- Thẻ thông tin khách mời -->
-            <div class="guest-identity-bar">
-              <div class="guest-pill">
-                <span class="guest-pill-icon">🎓</span>
-                <span>Khách mời: <strong class="dynamic-guest-name text-amber-300 font-bold">Bạn</strong></span>
-                <button type="button" id="guestbook-edit-name-btn" class="guest-edit-link" title="Đổi tên của bạn">(Đổi tên)</button>
-              </div>
-            </div>
-
             <!-- Form Gộp -->
             <form id="unified-guestbook-form" class="unified-form">
-              <!-- Tên của bạn -->
+              <!-- Tên của bạn (Bắt buộc không được để trống) -->
               <div class="form-group-custom">
-                <label for="unified-guest-name" class="custom-form-label">TÊN CỦA BẠN</label>
+                <label for="unified-guest-name" class="custom-form-label">TÊN CỦA BẠN <span style="color: #ef4444; font-weight: bold;">*</span></label>
                 <div class="input-with-icon">
                   <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -467,7 +458,7 @@
                     type="text" 
                     id="unified-guest-name" 
                     class="custom-input-field" 
-                    placeholder="Nhập tên của bạn..." 
+                    placeholder="Vui lòng nhập tên của bạn..." 
                     required 
                     maxlength="50"
                   >
