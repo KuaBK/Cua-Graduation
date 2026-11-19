@@ -229,13 +229,31 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 50% 30%, #002d62 0%, #001838 55%, #020612 100%);
   user-select: none;
   overflow: hidden;
   touch-action: none;
   overscroll-behavior: contain;
   transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.85s;
   padding: 1.5rem;
+}
+
+/* Ảnh nền trường Bách Khoa làm mờ nghệ thuật (Trang đầu tiên) */
+.envelope-bg-image {
+  position: absolute;
+  inset: -35px;
+  background: url('../images/bachkhoa_campus_bg.jpg') center 42% / cover no-repeat;
+  filter: blur(10px) brightness(0.38) saturate(1.2);
+  transform: scale(1.08);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.envelope-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 35%, rgba(0, 45, 98, 0.55) 0%, rgba(0, 24, 56, 0.78) 55%, rgba(2, 6, 18, 0.94) 100%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .envelope-overlay.hide {
@@ -254,6 +272,7 @@ body {
   filter: blur(140px);
   pointer-events: none;
   animation: pulse-glow 4s ease-in-out infinite alternate;
+  z-index: 2;
 }
 
 .ambient-stars-layer {
@@ -263,6 +282,7 @@ body {
   background-size: 32px 32px;
   opacity: 0.45;
   pointer-events: none;
+  z-index: 2;
 }
 
 @keyframes pulse-glow {
