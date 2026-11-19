@@ -1,10 +1,16 @@
-from flask import Flask, jsonify, request
 import os
+import json
 import random
+from flask import Flask, send_file, request, jsonify
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(BASE_DIR)
+if not os.path.exists(os.path.join(ROOT_DIR, 'index.html')):
+    ROOT_DIR = os.getcwd()
+
+app = Flask(__name__, static_folder=ROOT_DIR, static_url_path='')
 handler = app
 
 DB_URL = os.environ.get("DATABASE_URL")
@@ -21,6 +27,15 @@ def add_cors(response):
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
+# 1. Route phục vụ trang chủ index.html
+@app.route('/')
+def home():
+    index_file = os.path.join(ROOT_DIR, 'index.html')
+    if os.path.exists(index_file):
+        return send_file(index_file)
+    return "index.html not found", 404
+
+# 2. Route API: Lấy danh sách lời chúc & Gửi lời chúc mới
 @app.route('/api/wishes', methods=['GET', 'POST', 'OPTIONS'])
 @app.route('/api/rsvp', methods=['POST', 'OPTIONS'])
 def wishes():
@@ -96,6 +111,7 @@ def wishes():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# 3. Route API: Ghi nhận lượt tương tác
 @app.route('/api/track-click', methods=['POST', 'OPTIONS'])
 def track_click():
     if request.method == 'OPTIONS':
@@ -123,6 +139,7 @@ def track_click():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 
+# 4. Route API: Thống kê
 @app.route('/api/stats', methods=['GET'])
 def stats():
     try:
@@ -147,3 +164,10 @@ def stats():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# 5. Phục vụ các file tĩnh (css, js, images)
+@app.route('/<path:filename>')
+def serve_static(filename):
+    file_path = os.path.join(ROOT_DIR, filename)
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        return send_file(file_path)
+    return "Not Found", 404
