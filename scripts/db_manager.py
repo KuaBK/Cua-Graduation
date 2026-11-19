@@ -3,9 +3,28 @@ from psycopg2.extras import RealDictCursor
 import json
 import os
 
-DB_URL = "postgresql://neondb_owner:npg_WLDSCuH8R4Kw@ep-polished-sky-b5bxz2iv-pooler.c-7.us-east-2.aws.neon.tech/neondb?sslmode=require"
+def load_env():
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+        return
+    except ImportError:
+        pass
+    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env')
+    if os.path.exists(env_path):
+        with open(env_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    k, v = line.split('=', 1)
+                    os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+load_env()
+DB_URL = os.environ.get("DATABASE_URL")
 
 def get_connection():
+    if not DB_URL:
+        raise ValueError("Lỗi: Không tìm thấy biến môi trường DATABASE_URL trong .env")
     return psycopg2.connect(DB_URL)
 
 def init_tables():

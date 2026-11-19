@@ -6,10 +6,11 @@ from datetime import datetime
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-DEFAULT_DB_URL = "postgresql://neondb_owner:npg_WLDSCuH8R4Kw@ep-polished-sky-b5bxz2iv-pooler.c-7.us-east-2.aws.neon.tech/neondb?sslmode=require"
-DB_URL = os.environ.get("DATABASE_URL", DEFAULT_DB_URL)
+DB_URL = os.environ.get("DATABASE_URL")
 
 def get_db_connection():
+    if not DB_URL:
+        raise ValueError("Lỗi: Chưa cấu hình biến môi trường DATABASE_URL. Vui lòng thiết lập DATABASE_URL trong Environment Variables.")
     return psycopg2.connect(DB_URL, connect_timeout=10)
 
 class handler(BaseHTTPRequestHandler):
@@ -185,3 +186,4 @@ class handler(BaseHTTPRequestHandler):
                     })
         except Exception as e:
             self.send_json_response({"error": str(e)}, 500)
+

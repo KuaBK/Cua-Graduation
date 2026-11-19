@@ -9,11 +9,36 @@ from datetime import datetime
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-PORT = 8080
-DB_URL = "postgresql://neondb_owner:npg_WLDSCuH8R4Kw@ep-polished-sky-b5bxz2iv-pooler.c-7.us-east-2.aws.neon.tech/neondb?sslmode=require"
+def load_env():
+    """Tải biến môi trường từ file .env nếu có"""
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+        return
+    except ImportError:
+        pass
+    
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+    if os.path.exists(env_path):
+        try:
+            with open(env_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        k, v = line.split('=', 1)
+                        os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+        except Exception as e:
+            print(f"Error loading .env: {e}")
+
+load_env()
+
+PORT = int(os.environ.get("PORT", 8080))
+DB_URL = os.environ.get("DATABASE_URL")
 
 def get_db_connection():
-    """Tạo kết nối mới đến Neon PostgreSQL (tối ưu hóa cho PgBouncer Pooler)"""
+    """Tạo kết nối mới đến PostgreSQL từ biến môi trường DATABASE_URL"""
+    if not DB_URL:
+        raise ValueError("Lỗi: Không tìm thấy biến môi trường DATABASE_URL. Hãy tạo file .env hoặc thiết lập DATABASE_URL.")
     return psycopg2.connect(DB_URL, connect_timeout=10)
 
 # Queue xử lý log click bất đồng bộ (Async Click Tracking)
