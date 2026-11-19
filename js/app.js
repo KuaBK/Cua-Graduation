@@ -1,12 +1,15 @@
 /**
- * Thiệp Mời Tốt Nghiệp - Nguyễn Tuấn Phong
- * Script tương tác & Xử lý nhạc, phong bì, pháo hoa rơi liên tục, lịch trình, RSVP
+ * Thiệp Mời Tốt Nghiệp — Nguyễn Tuấn Phong
+ * Phiên bản Đại học Bách Khoa TP.HCM (HCMUT)
+ * Xử lý mở thư 3D, khóa cuộn trang triệt để, nhạc nền YouTube, pháo hoa rơi liên tục & RSVP
  */
 
 (function () {
   'use strict';
 
-  // --- 1. DỮ LIỆU GALLERY 16 HÌNH ẢNH ---
+  // =========================================================================
+  // 1. DỮ LIỆU GALLERY 16 HÌNH ẢNH KỶ NIỆM BÁCH KHOA
+  // =========================================================================
   const GALLERY_IMAGES = [
     {
       id: "img-c1",
@@ -106,7 +109,7 @@
     }
   ];
 
-  // Tùy biến người nhận từ URL (?name=... hoặc ?to=...)
+  // Tùy biến người nhận từ tham số URL (?name=... hoặc ?to=...)
   const urlParams = new URLSearchParams(window.location.search);
   const customGuest = urlParams.get('name') || urlParams.get('to') || urlParams.get('guest');
   if (customGuest) {
@@ -114,14 +117,49 @@
     guestElements.forEach(el => el.textContent = customGuest);
   }
 
-  // --- 2. YOUTUBE MUSIC CONTROLLER (Video ID: b-FHfiM8ILo) ---
+  // =========================================================================
+  // 2. KHÓA CUỘN TRANG TRIỆT ĐỂ KHI CHƯA MỞ PHONG BÌ (FIX 100% LỖI CUỘN ĐƯỢC)
+  // =========================================================================
+  function isEnvelopeOpen() {
+    const overlay = document.getElementById('envelope-overlay');
+    return overlay && overlay.classList.contains('hide');
+  }
+
+  function preventScrollHandler(e) {
+    if (!isEnvelopeOpen()) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  }
+
+  function preventKeyScrollHandler(e) {
+    if (!isEnvelopeOpen()) {
+      // Chặn các phím cuộn: Space (32), PageUp (33), PageDown (34), End (35), Home (36), Arrows (37-40)
+      if ([32, 33, 34, 35, 36, 37, 38, 39, 40].includes(e.keyCode)) {
+        e.preventDefault();
+        return false;
+      }
+    }
+  }
+
+  window.addEventListener('wheel', preventScrollHandler, { passive: false });
+  window.addEventListener('touchmove', preventScrollHandler, { passive: false });
+  window.addEventListener('keydown', preventKeyScrollHandler, { passive: false });
+
+  // Đảm bảo class envelope-active luôn có trên cả html và body ban đầu
+  document.documentElement.classList.add('envelope-active');
+  document.body.classList.add('envelope-active');
+
+  // =========================================================================
+  // 3. YOUTUBE MUSIC CONTROLLER (Video ID: b-FHfiM8ILo)
+  // =========================================================================
   let ytPlayer = null;
   let isPlaying = false;
 
   const musicToggleBtn = document.getElementById('music-toggle-btn');
   const ytIframe = document.getElementById('youtube-bg-player');
 
-  // Khởi tạo YouTube Iframe API
   window.onYouTubeIframeAPIReady = function () {
     ytPlayer = new YT.Player('youtube-bg-player', {
       events: {
@@ -131,9 +169,9 @@
   };
 
   function onPlayerStateChange(event) {
-    if (event.data === 1) {
+    if (event.data === 1) { // Đang phát
       setMusicUIState(true);
-    } else if (event.data === 2 || event.data === 0) {
+    } else if (event.data === 2 || event.data === 0) { // Tạm dừng hoặc hết
       setMusicUIState(false);
     }
   }
@@ -173,8 +211,8 @@
         musicToggleBtn.classList.add('playing');
         musicToggleBtn.title = 'Tắt nhạc nền';
         musicToggleBtn.innerHTML = `
-          <div class="flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="music-icon-wrap">
+            <svg class="speaker-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
               <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
               <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
@@ -190,8 +228,8 @@
         musicToggleBtn.classList.remove('playing');
         musicToggleBtn.title = 'Bật nhạc nền';
         musicToggleBtn.innerHTML = `
-          <div class="flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-zinc-400" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="music-icon-wrap">
+            <svg class="speaker-icon icon-muted" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
               <line x1="23" y1="9" x2="17" y2="15"></line>
               <line x1="17" y1="9" x2="23" y2="15"></line>
@@ -209,12 +247,15 @@
     });
   }
 
-  // --- 3. PHONG BÌ THIỆP MỜI (ENVELOPE INTRO) ---
+  // =========================================================================
+  // 4. HIỆU ỨNG MỞ PHONG BÌ 3D HOÀNG GIA & MỞ KHÓA CUỘN
+  // =========================================================================
   const envelopeOverlay = document.getElementById('envelope-overlay');
   const envelopeScene = document.getElementById('envelope-scene');
   const waxSealBtn = document.getElementById('wax-seal-btn');
   const envelopeTapHint = document.getElementById('envelope-tap-hint');
   const letterOpenBtn = document.getElementById('letter-open-btn');
+  const envelopeLetter = document.getElementById('envelope-letter');
 
   let isUnsealed = false;
 
@@ -222,19 +263,22 @@
     if (isUnsealed) return;
     isUnsealed = true;
 
-    // Phát nhạc ngay khi chạm con dấu sáp
+    // Phát nhạc ngay khi chạm con dấu (thỏa mãn gesture policy của trình duyệt)
     playMusic();
 
     envelopeScene.classList.add('unsealed');
     if (envelopeTapHint) {
-      envelopeTapHint.textContent = 'Đang mở phong bì...';
+      envelopeTapHint.textContent = '✦ Đang mở phong bì... ✦';
     }
+
+    // Nổ pháo hoa vàng kim nhỏ tại con dấu
+    fireWaxSealSparkles();
 
     setTimeout(() => {
       if (envelopeTapHint) {
-        envelopeTapHint.textContent = 'Chạm bất kỳ đâu để vào thiệp';
+        envelopeTapHint.textContent = '✦ Chạm vào lá thư để mở toàn bộ thiệp ✦';
       }
-    }, 1200);
+    }, 1100);
   }
 
   function openInvitation() {
@@ -247,9 +291,19 @@
       playMusic();
     }
 
+    // 1. MỞ KHÓA CUỘN TRANG HOÀN TOÀN
+    document.documentElement.classList.remove('envelope-active');
+    document.body.classList.remove('envelope-active');
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.height = '';
+    window.scrollTo(0, 0);
+
+    // 2. Ẩn phong bì mượt mà
     envelopeOverlay.classList.add('hide');
 
-    // Bắn pháo hoa chào mừng
+    // 3. Bắn chùm pháo hoa chào mừng hoành tráng
     fireConfettiBurst();
 
     if (musicToggleBtn) {
@@ -281,6 +335,15 @@
     });
   }
 
+  if (envelopeLetter) {
+    envelopeLetter.addEventListener('click', function (e) {
+      if (isUnsealed) {
+        e.stopPropagation();
+        openInvitation();
+      }
+    });
+  }
+
   if (envelopeOverlay) {
     envelopeOverlay.addEventListener('click', function (e) {
       if (isUnsealed) {
@@ -289,7 +352,9 @@
     });
   }
 
-  // --- 4. RENDER GALLERY POLAROID (TO VÀ RỘNG TRÊN PC/LAPTOP) ---
+  // =========================================================================
+  // 5. RENDER GALLERY POLAROID (TO HƠN RÕ RỆT TRÊN LAPTOP / PC)
+  // =========================================================================
   const galleryGrid = document.getElementById('gallery-grid');
   const angles = [-2.5, 1.8, -1.2, 2.5, -1.8, 1.2, 2, -2, 1.5, -1.5, 2.2, -2.2, 1.6, -1.2, 1.8, -1.8];
 
@@ -318,7 +383,9 @@
 
   renderGallery();
 
-  // --- 5. LIGHTBOX MODAL ---
+  // =========================================================================
+  // 6. LIGHTBOX MODAL
+  // =========================================================================
   const lightboxOverlay = document.getElementById('lightbox-overlay');
   const lightboxImg = document.getElementById('lightbox-img');
   const lightboxCaption = document.getElementById('lightbox-caption');
@@ -370,7 +437,7 @@
     });
   }
 
-  // Hỗ trợ vuốt trên điện thoại cho Lightbox
+  // Vuốt chuyển ảnh trên màn hình cảm ứng
   let touchStartX = 0;
   let touchEndX = 0;
 
@@ -381,29 +448,23 @@
 
     lightboxOverlay.addEventListener('touchend', function (e) {
       touchEndX = e.changedTouches[0].screenX;
-      handleSwipe();
+      if (Math.abs(touchEndX - touchStartX) > 45) {
+        if (touchEndX < touchStartX) nextPhoto();
+        else prevPhoto();
+      }
     }, { passive: true });
   }
 
-  function handleSwipe() {
-    const diff = touchEndX - touchStartX;
-    if (Math.abs(diff) > 45) {
-      if (diff < 0) {
-        nextPhoto();
-      } else {
-        prevPhoto();
-      }
-    }
-  }
-
   window.addEventListener('keydown', function (e) {
-    if (!lightboxOverlay.classList.contains('active')) return;
+    if (!lightboxOverlay || !lightboxOverlay.classList.contains('active')) return;
     if (e.key === 'Escape') closeLightbox();
     if (e.key === 'ArrowRight') nextPhoto();
     if (e.key === 'ArrowLeft') prevPhoto();
   });
 
-  // --- 6. ĐẾM NGƯỢC THỜI GIAN (COUNTDOWN) ---
+  // =========================================================================
+  // 7. ĐẾM NGƯỢC THỜI GIAN (COUNTDOWN)
+  // =========================================================================
   const TARGET_DATE = new Date('2026-11-28T16:30:00+07:00').getTime();
 
   const daysEl = document.getElementById('countdown-days');
@@ -437,7 +498,9 @@
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
-  // --- 7. BẢN ĐỒ & SAO CHÉP ĐỊA CHỈ ---
+  // =========================================================================
+  // 8. BẢN ĐỒ & SAO CHÉP ĐỊA CHỈ
+  // =========================================================================
   const copyAddressBtn = document.getElementById('copy-address-btn');
   const toastMsg = document.getElementById('toast-msg');
   const FULL_ADDRESS = 'Trường Đại học Bách khoa - ĐHQG TPHCM (Cổng 1: 268 Lý Thường Kiệt, Phường 14, Quận 10, TP.HCM)';
@@ -475,29 +538,37 @@
     showToast('✓ Đã sao chép địa chỉ Bách Khoa!');
   }
 
-  // --- 8. FORM RSVP (XANH LÁ & ĐỎ CHUẨN XÁC THEO ẢNH 3) ---
+  // =========================================================================
+  // 9. FORM RSVP (XANH LÁ & ĐỎ CHUẨN XÁC THEO ẢNH 4)
+  // =========================================================================
   const rsvpForm = document.getElementById('rsvp-form');
   const rsvpSuccess = document.getElementById('rsvp-success');
   const btnAttend = document.getElementById('btn-attend');
   const btnDecline = document.getElementById('btn-decline');
   const attendanceInput = document.getElementById('attendance-value');
+  const checkAttend = document.getElementById('check-attend');
+  const checkDecline = document.getElementById('check-decline');
 
   function setAttendanceChoice(choice) {
     if (!attendanceInput) return;
     attendanceInput.value = choice;
 
     if (choice === 'attend') {
+      // Sẽ tham dự -> XANH LÁ ACTIVE
       btnAttend.classList.add('active');
-      btnAttend.querySelector('.check-icon').style.display = 'inline';
+      if (checkAttend) checkAttend.style.display = 'inline';
 
+      // Rất tiếc, không thể -> INACTIVE
       btnDecline.classList.remove('active');
-      btnDecline.querySelector('.check-icon').style.display = 'none';
+      if (checkDecline) checkDecline.style.display = 'none';
     } else {
+      // Rất tiếc, không thể -> ĐỎ ACTIVE (Ảnh 4)
       btnDecline.classList.add('active');
-      btnDecline.querySelector('.check-icon').style.display = 'inline';
+      if (checkDecline) checkDecline.style.display = 'inline';
 
+      // Sẽ tham dự -> INACTIVE
       btnAttend.classList.remove('active');
-      btnAttend.querySelector('.check-icon').style.display = 'none';
+      if (checkAttend) checkAttend.style.display = 'none';
     }
   }
 
@@ -513,7 +584,6 @@
     });
   }
 
-  // Kiểm tra lưu trữ trước đó
   const savedRsvp = localStorage.getItem('graduation_rsvp_tuanphong');
   if (savedRsvp) {
     try {
@@ -546,7 +616,7 @@
       if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = `
-          <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <div style="width: 16px; height: 16px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
           <span>Đang gửi phản hồi...</span>
         `;
       }
@@ -564,7 +634,9 @@
     });
   }
 
-  // --- 9. HIỆU ỨNG PHÁO HOA RƠI XUỐNG LIÊN TỤC (THEO ẢNH 1) + PHÁO HOA NỔ ---
+  // =========================================================================
+  // 10. HIỆU ỨNG PHÁO HOA RƠI XUỐNG LIÊN TỤC (ẢNH 1 & 2) + PHÁO HOA NỔ
+  // =========================================================================
   const canvas = document.getElementById('confetti-canvas');
   let ctx = null;
   if (canvas) {
@@ -573,19 +645,19 @@
     canvas.height = window.innerHeight;
   }
 
-  // Bảng màu rực rỡ như Ảnh 1
+  // Bảng màu rực rỡ như Ảnh 2: Teal/Cyan, Amber, Violet, Pink, Green, Sky Blue, Coral Red
   const CONFETTI_COLORS = [
-    '#22c55e', // Xanh lá
-    '#3b82f6', // Xanh dương
-    '#a855f7', // Tím
-    '#ec4899', // Hồng
-    '#eab308', // Vàng
-    '#f97316', // Cam
-    '#06b6d4', // Cyan
-    '#ef4444'  // Đỏ
+    '#06b6d4', // Teal/Cyan
+    '#f59e0b', // Vàng cam hổ phách
+    '#a855f7', // Tím nhạt
+    '#ec4899', // Hồng đào
+    '#10b981', // Xanh ngọc
+    '#38bdf8', // Xanh Bách Khoa sáng
+    '#0054a6', // Xanh Bách Khoa
+    '#ef4444'  // Đỏ tươi
   ];
 
-  // 1. Pháo hoa giấy rơi nhẹ nhàng liên tục (Persistent falling confetti as in Image 1)
+  // 1. Pháo hoa giấy rơi nhẹ nhàng liên tục (Ảnh 1 & 2)
   const fallingFlakes = [];
   const FLAKE_COUNT = 55;
 
@@ -599,24 +671,24 @@
         y: Math.random() * canvas.height,
         w: Math.random() * 6 + 7,
         h: Math.random() * 8 + 9,
-        vy: Math.random() * 1.4 + 0.8, // tốc độ rơi nhẹ nhàng
-        vx: (Math.random() - 0.5) * 0.6,
+        vy: Math.random() * 1.3 + 0.7,
+        vx: (Math.random() - 0.5) * 0.5,
         rotation: Math.random() * 360,
-        rSpeed: (Math.random() - 0.5) * 2.5,
+        rSpeed: (Math.random() - 0.5) * 2.2,
         color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
         opacity: Math.random() * 0.35 + 0.65,
         seed: Math.random() * 100,
-        shape: Math.random() > 0.35 ? 'pill' : 'circle'
+        shape: Math.random() > 0.4 ? 'pill' : 'circle'
       });
     }
   }
 
-  // 2. Mảng pháo hoa nổ khi mở thiệp hoặc gửi RSVP (Explosion burst)
+  // 2. Mảng pháo nổ khi mở thiệp hoặc gửi RSVP
   const burstParticles = [];
 
   function fireConfettiBurst() {
     if (!canvas) return;
-    const count = 100;
+    const count = 130;
     const startX = canvas.width / 2;
     const startY = canvas.height * 0.45;
 
@@ -624,8 +696,8 @@
       burstParticles.push({
         x: startX,
         y: startY,
-        vx: (Math.random() - 0.5) * 20,
-        vy: (Math.random() - 0.85) * 18,
+        vx: (Math.random() - 0.5) * 22,
+        vy: (Math.random() - 0.85) * 20,
         size: Math.random() * 8 + 5,
         color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
         rotation: Math.random() * 360,
@@ -637,20 +709,43 @@
     }
   }
 
+  // Mini Sparkles khi bẻ con dấu sáp vàng
+  function fireWaxSealSparkles() {
+    if (!canvas) return;
+    const sealColors = ['#f59e0b', '#fbbf24', '#fef08a', '#38bdf8', '#ffffff'];
+    const count = 45;
+    const startX = canvas.width / 2;
+    const startY = canvas.height / 2;
+
+    for (let i = 0; i < count; i++) {
+      burstParticles.push({
+        x: startX,
+        y: startY,
+        vx: (Math.random() - 0.5) * 14,
+        vy: (Math.random() - 0.5) * 14,
+        size: Math.random() * 5 + 3,
+        color: sealColors[Math.floor(Math.random() * sealColors.length)],
+        rotation: Math.random() * 360,
+        rSpeed: (Math.random() - 0.5) * 8,
+        opacity: 1,
+        shape: 'circle',
+        decay: Math.random() * 0.015 + 0.015
+      });
+    }
+  }
+
   // Vòng lặp Render 60fps mượt mà
-  let lastTime = performance.now();
   function loop(currentTime) {
     if (!ctx || !canvas) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Render pháo hoa rơi liên tục (Ảnh 1)
+    // Render pháo hoa rơi liên tục (Ảnh 1 & 2)
     for (let f of fallingFlakes) {
       f.y += f.vy;
-      f.x += Math.sin(currentTime * 0.002 + f.seed) * 0.8 + f.vx;
+      f.x += Math.sin(currentTime * 0.002 + f.seed) * 0.75 + f.vx;
       f.rotation += f.rSpeed;
 
-      // Khi rơi xuống đáy thì quay lại đỉnh
       if (f.y > canvas.height + 20) {
         f.y = -20;
         f.x = Math.random() * canvas.width;
@@ -665,10 +760,13 @@
       ctx.fillStyle = f.color;
 
       if (f.shape === 'pill') {
-        // Vẽ hình thoi/chữ nhật bo tròn như Ảnh 1
         ctx.beginPath();
         const r = Math.min(f.w, f.h) / 2.5;
-        ctx.roundRect(-f.w / 2, -f.h / 2, f.w, f.h, r);
+        if (ctx.roundRect) {
+          ctx.roundRect(-f.w / 2, -f.h / 2, f.w, f.h, r);
+        } else {
+          ctx.rect(-f.w / 2, -f.h / 2, f.w, f.h);
+        }
         ctx.fill();
       } else {
         ctx.beginPath();
@@ -678,12 +776,12 @@
       ctx.restore();
     }
 
-    // Render pháo nổ (nếu có)
+    // Render pháo nổ
     for (let i = burstParticles.length - 1; i >= 0; i--) {
       let p = burstParticles[i];
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.38; // gravity
+      p.vy += 0.38;
       p.vx *= 0.985;
       p.rotation += p.rSpeed;
       p.opacity -= p.decay;
