@@ -2202,269 +2202,52 @@ body {
 }
 
 /* ==========================================================================
-   SECTION 6: SỔ LƯU BÚT — ĐỂ LẠI VÀI DÒNG NHÉ (THE WISH WALL)
-   Khớp chính xác với hình ảnh đính kèm của người dùng:
-   - Eyebrow xanh ngọc "SỔ LƯU BÚT"
-   - Tiêu đề "Để lại vài dòng nhé"
-   - Form bên trái (Tên của bạn, Lời chúc, nút "Dán lên tường")
-   - Bức tường thiệp dán ghi chú (sticky note cards) bên phải
+   HIỆU ỨNG ANIMATION TOÀN TRANG (SCROLL REVEAL & MICRO-INTERACTIONS)
    ========================================================================== */
-.guestbook-section {
-  padding: 4.5rem 1rem 5.5rem;
-  position: relative;
-  background: radial-gradient(circle at 20% 20%, rgba(45, 212, 191, 0.09) 0%, transparent 60%),
-              radial-gradient(circle at 80% 70%, rgba(56, 189, 248, 0.08) 0%, transparent 60%);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
-@media (min-width: 768px) {
-  .guestbook-section {
-    padding: 6rem 2rem 7rem;
-  }
-}
-
-.guestbook-header {
-  margin-bottom: 2.75rem;
-}
-
-.guestbook-eyebrow {
-  display: inline-block;
-  color: #5eead4;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  margin-bottom: 0.65rem;
-  text-shadow: 0 0 16px rgba(94, 234, 212, 0.4);
-}
-
-.guestbook-title {
-  font-family: var(--font-heading);
-  font-size: 2.4rem;
-  font-weight: 700;
-  color: #ffffff;
-  line-height: 1.22;
-  margin-bottom: 0.75rem;
-  letter-spacing: 0.01em;
-}
-
-@media (min-width: 768px) {
-  .guestbook-title {
-    font-size: 3.25rem;
-  }
-}
-
-.guestbook-desc {
-  color: #94a3b8;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  max-width: 680px;
-}
-
-.guestbook-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2.5rem;
-  align-items: start;
-}
-
-@media (min-width: 960px) {
-  .guestbook-grid {
-    grid-template-columns: 360px 1fr;
-    gap: 3rem;
-  }
-}
-
-@media (min-width: 1240px) {
-  .guestbook-grid {
-    grid-template-columns: 410px 1fr;
-    gap: 3.75rem;
-  }
-}
-
-/* CỘT TRÁI: FORM GỬI LỜI CHÚC */
-.guestbook-form-col {
-  position: sticky;
-  top: 2rem;
-}
-
-.wish-form {
-  background: rgba(10, 16, 29, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1.15rem;
-  padding: 1.75rem 1.5rem;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
-}
-
-.wish-form-group {
-  margin-bottom: 1.35rem;
-}
-
-.wish-label {
-  display: block;
-  color: #94a3b8;
-  font-size: 0.88rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-}
-
-.wish-input,
-.wish-textarea {
-  width: 100%;
-  background: rgba(13, 23, 42, 0.85);
-  border: 1.5px solid rgba(255, 255, 255, 0.14);
-  border-radius: 0.75rem;
-  padding: 0.85rem 1.15rem;
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 0.98rem;
-  outline: none;
-  transition: all 0.25s ease;
-  box-sizing: border-box;
-}
-
-.wish-input:focus,
-.wish-textarea:focus {
-  border-color: #2dd4bf;
-  background: rgba(13, 23, 42, 0.95);
-  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.2), 0 0 16px rgba(45, 212, 191, 0.15);
-}
-
-.wish-input::placeholder,
-.wish-textarea::placeholder {
-  color: #475569;
-}
-
-.wish-textarea {
-  resize: vertical;
-  min-height: 135px;
-  line-height: 1.55;
-}
-
-.wish-submit-btn {
-  width: 100%;
-  background: linear-gradient(135deg, #6ee7b7 0%, #2dd4bf 50%, #14b8a6 100%);
-  color: #042f2e;
-  font-weight: 700;
-  font-size: 1.05rem;
-  padding: 0.95rem 1.5rem;
-  border-radius: 9999px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgba(45, 212, 191, 0.35);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.wish-submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(45, 212, 191, 0.5);
-  filter: brightness(1.06);
-}
-
-.wish-submit-btn:active {
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
   transform: translateY(0);
 }
 
-.wish-submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* CỘT PHẢI: BỨC TƯỜNG LỜI CHÚC (STICKY NOTE WALL) */
-.wishes-wall {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  max-height: 640px;
-  overflow-y: auto;
-  padding: 0.65rem 0.65rem 1.75rem;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(45, 212, 191, 0.4) transparent;
-}
-
-@media (min-width: 600px) {
-  .wishes-wall {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.65rem;
+@keyframes radarPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.65);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(56, 189, 248, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
   }
 }
 
-.wishes-wall::-webkit-scrollbar {
-  width: 6px;
+.timeline-dot-blue {
+  animation: radarPulse 2.4s infinite ease-out;
 }
 
-.wishes-wall::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.wishes-wall::-webkit-scrollbar-thumb {
-  background: rgba(45, 212, 191, 0.4);
-  border-radius: 9999px;
-}
-
-/* THẺ GHI CHÚ POST-IT */
-.wish-card {
-  background: #ffffff;
-  color: #0f172a;
-  border-radius: 0.6rem;
-  padding: 1.35rem 1.4rem 1.15rem;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 145px;
-  position: relative;
-  user-select: none;
-  box-sizing: border-box;
-}
-
-.wish-card:hover {
-  transform: scale(1.03) rotate(0deg) !important;
-  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.55), 0 0 20px rgba(45, 212, 191, 0.25);
-  z-index: 10;
-}
-
-.wish-text {
-  font-family: var(--font-heading);
-  font-style: italic;
-  font-size: 0.98rem;
-  line-height: 1.6;
-  color: #1e293b;
-  margin-bottom: 1.15rem;
-  white-space: pre-line;
-  word-break: break-word;
-}
-
-.wish-author {
-  color: #0d9488;
-  font-weight: 700;
-  font-size: 0.92rem;
-  align-self: flex-start;
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.wish-author-prefix {
-  color: #14b8a6;
-}
-
-.wish-card-pop {
-  animation: wishCardPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+@keyframes buttonShimmer {
+  0% {
+    transform: translateX(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(200%) rotate(45deg);
+  }
 }
 
 @keyframes wishCardPop {
   0% {
     opacity: 0;
-    transform: scale(0.6) translateY(-20px);
+    transform: scale(0.85) translateY(-15px);
+  }
+  60% {
+    transform: scale(1.02) translateY(0);
   }
   100% {
     opacity: 1;
@@ -2472,24 +2255,557 @@ body {
   }
 }
 
-.wishes-loading,
-.wishes-empty {
+/* ==========================================================================
+   SECTION 6: SỔ LƯU BÚT & XÁC NHẬN THAM DỰ HOÀNG GIA (GỘP CHUNG & ĐỒNG BỘ)
+   - Màu nền đồng bộ 100% với màu xanh đêm Hoàng Gia Bách Khoa
+   - Form gộp: Tên, Xác nhận tham dự (Xanh/Đỏ), Lời chúc, Gợi ý nhanh
+   - Bức tường lời chúc THẬT từ Database với thiết kế Royal Frosted Glass
+   ========================================================================== */
+.guestbook-rsvp-section {
+  padding: 5rem 1rem 6rem;
+  position: relative;
+  background: radial-gradient(ellipse at 50% 10%, rgba(0, 84, 166, 0.25) 0%, transparent 70%),
+              radial-gradient(circle at 15% 90%, rgba(2, 132, 199, 0.12) 0%, transparent 60%);
+  border-top: 1px solid rgba(56, 189, 248, 0.18);
+}
+
+@media (min-width: 768px) {
+  .guestbook-rsvp-section {
+    padding: 6.5rem 2rem 7.5rem;
+  }
+}
+
+.guestbook-badge-royal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.25rem;
+  background: rgba(0, 84, 166, 0.18);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 9999px;
+  color: #38bdf8;
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin-bottom: 0.85rem;
+  box-shadow: 0 0 16px rgba(0, 84, 166, 0.3);
+}
+
+.guestbook-badge-royal .badge-star {
+  color: #fbbf24;
+  font-size: 0.95rem;
+}
+
+.guestbook-section-desc {
+  color: #cbd5e1;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  max-width: 720px;
+  margin: 1rem auto 0;
+  text-align: center;
+}
+
+/* LƯỚI GỘP SỔ LƯU BÚT & RSVP */
+.guestbook-unified-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  margin-top: 3.25rem;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .guestbook-unified-grid {
+    grid-template-columns: 460px 1fr;
+    gap: 3.25rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .guestbook-unified-grid {
+    grid-template-columns: 500px 1fr;
+    gap: 3.75rem;
+  }
+}
+
+/* CỘT TRÁI: THẺ FORM GỘP HOÀNG GIA */
+.guestbook-form-card {
+  background: rgba(6, 13, 31, 0.88);
+  border: 1.5px solid rgba(56, 189, 248, 0.28);
+  border-radius: 1.35rem;
+  padding: 2rem 1.65rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 35px rgba(0, 84, 166, 0.25);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  position: relative;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .guestbook-form-card {
+    padding: 2.25rem 2rem;
+  }
+}
+
+.guest-identity-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.guest-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: #94a3b8;
+}
+
+.guest-pill-icon {
+  font-size: 1.15rem;
+}
+
+.guest-edit-link {
+  background: transparent;
+  border: none;
+  color: #38bdf8;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0 0.25rem;
+  transition: color 0.2s;
+}
+
+.guest-edit-link:hover {
+  color: #7dd3fc;
+}
+
+.form-group-custom {
+  margin-bottom: 1.5rem;
+}
+
+.custom-form-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  margin-bottom: 0.65rem;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-icon {
+  position: absolute;
+  left: 1.15rem;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.custom-input-field {
+  width: 100%;
+  background: rgba(11, 22, 44, 0.85);
+  border: 1.5px solid rgba(56, 189, 248, 0.22);
+  border-radius: 0.85rem;
+  padding: 0.9rem 1.15rem 0.9rem 2.85rem;
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.custom-input-field:focus {
+  border-color: #38bdf8;
+  background: rgba(11, 22, 44, 0.98);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22), 0 0 20px rgba(0, 84, 166, 0.35);
+}
+
+/* NÚT THAM DỰ (XANH LÁ & ĐỎ) */
+.attendance-options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.attendance-option-btn {
+  padding: 0.88rem 1rem;
+  border-radius: 0.85rem;
+  background: rgba(11, 22, 44, 0.85);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.attendance-option-btn.opt-attend.active {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: #10b981;
+  color: #34d399;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.attendance-option-btn.opt-decline.active {
+  background: rgba(239, 68, 68, 0.16);
+  border-color: #ef4444;
+  color: #f87171;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+.attendance-option-btn:hover:not(.active) {
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.label-with-counter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+}
+
+.label-with-counter .char-count {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.custom-textarea-field {
+  width: 100%;
+  background: rgba(11, 22, 44, 0.85);
+  border: 1.5px solid rgba(56, 189, 248, 0.22);
+  border-radius: 0.85rem;
+  padding: 0.95rem 1.15rem;
+  color: #ffffff;
+  font-size: 0.98rem;
+  font-family: inherit;
+  line-height: 1.55;
+  outline: none;
+  resize: vertical;
+  min-height: 110px;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.custom-textarea-field:focus {
+  border-color: #38bdf8;
+  background: rgba(11, 22, 44, 0.98);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22), 0 0 20px rgba(0, 84, 166, 0.35);
+}
+
+/* GỢI Ý LỜI CHÚC NHANH (QUICK CHIPS) */
+.quick-wish-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+}
+
+.wish-chip {
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 9999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  color: #7dd3fc;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wish-chip:hover {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: #38bdf8;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* NÚT SUBMIT HOÀNG GIA */
+.royal-submit-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #0054a6 0%, #0284c7 50%, #38bdf8 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 1.05rem 1.5rem;
+  border-radius: 0.85rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 84, 166, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.royal-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(2, 132, 199, 0.65);
+  filter: brightness(1.06);
+}
+
+.royal-submit-btn:active {
+  transform: translateY(0);
+}
+
+.royal-submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transform: skewX(-20deg);
+  animation: buttonShimmer 4s infinite linear;
+}
+
+/* SUCCESS BANNER */
+.unified-success-banner {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.35rem;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.success-icon-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #10b981;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.success-banner-body h4 {
+  font-size: 0.98rem;
+  color: #34d399;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.success-banner-body p {
+  font-size: 0.88rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* CỘT PHẢI: BỨC TƯỜNG LỜI CHÚC THỰC TẾ TỪ POSTGRESQL */
+.guestbook-wall-card {
+  background: rgba(6, 13, 31, 0.75);
+  border: 1.5px solid rgba(56, 189, 248, 0.2);
+  border-radius: 1.35rem;
+  padding: 1.85rem 1.65rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+.wall-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.wall-title-box {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.wall-icon {
+  font-size: 1.35rem;
+}
+
+.wall-title {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.wishes-counter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  font-size: 0.82rem;
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+  animation: radarPulse 1.8s infinite;
+}
+
+.custom-wishes-wall {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.35rem;
+  max-height: 600px;
+  overflow-y: auto;
+  padding: 0.4rem 0.4rem 1.25rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(56, 189, 248, 0.4) transparent;
+}
+
+@media (min-width: 640px) {
+  .custom-wishes-wall {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.45rem;
+  }
+}
+
+.custom-wishes-wall::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-wishes-wall::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.35);
+  border-radius: 9999px;
+}
+
+/* THẺ GHI CHÚ FROSTED ROYAL GLASS (CUSTOM RIÊNG) */
+.real-wish-card {
+  background: rgba(10, 22, 46, 0.82);
+  border: 1.5px solid rgba(56, 189, 248, 0.22);
+  border-radius: 1rem;
+  padding: 1.35rem 1.35rem 1.15rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 155px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.real-wish-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(56, 189, 248, 0.55);
+  box-shadow: 0 18px 40px rgba(0, 84, 166, 0.4), 0 0 25px rgba(56, 189, 248, 0.2);
+  z-index: 5;
+}
+
+.real-wish-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+  gap: 0.5rem;
+}
+
+.real-wish-author {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fde047;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.real-wish-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.real-wish-badge.badge-attend {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.real-wish-badge.badge-decline {
+  background: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.real-wish-text {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: #f1f5f9;
+  margin-bottom: 1.15rem;
+  word-break: break-word;
+  white-space: pre-line;
+}
+
+.real-wish-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  color: #64748b;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  padding-top: 0.65rem;
+}
+
+.real-wish-star {
+  color: #fbbf24;
+  font-size: 0.85rem;
+}
+
+.wish-card-pop {
+  animation: wishCardPop 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wishes-empty-state {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 3rem 1.5rem;
+  padding: 3.5rem 1.5rem;
   color: #94a3b8;
-  font-size: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.85rem;
 }
 
-.wishes-loading .spinner {
-  width: 28px;
-  height: 28px;
-  border: 3px solid rgba(45, 212, 191, 0.25);
-  border-top-color: #2dd4bf;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+.wishes-empty-state .empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.25rem;
 }

@@ -48,24 +48,10 @@ def init_tables():
     );
     """)
     
-    # Kiểm tra xem đã có dữ liệu mẫu trong wishes chưa
+    # Kiểm tra cấu trúc bảng
     cur.execute("SELECT COUNT(*) FROM wishes;")
     count = cur.fetchone()[0]
-    if count == 0:
-        sample_wishes = [
-            ("T", "Có lẽ anh chẳng biết em là ai đâu, vì em là một fan hâm mộ lặng thầm của anh. Chúc mừng anh nha, chúc anh luôn hạnh phúc, thành công và may mắn. Siuuuuuuu", -1.2),
-            ("T", "ご卒業おめでとうございます。今後のご活躍を心よりお祈り申し上げます。", 1.5),
-            ("V", "You did amazing, Phong! Congratulations on your graduation! 🎓✨", -2.0),
-            ("Jasmine", "Chúc mừng anh đã hoàn thành một chặng đường đáng tự hào. Chúc anh luôn giữ được nhiệt huyết, bản lĩnh và sự kiên định trên hành trình phía trước. Mong rằng những năm tháng thanh xuân đã qua sẽ trở thành hành trang quý giá để anh tự tin bước tiếp vững vàng <33", 1.8),
-            ("1 người bạn cùng tên", "Chúc mừng tân cử nhân Bách Khoa, chúc bạn luôn thành công trong công việc và cuộc sống.", -1.5),
-            ("Kevin Nha Trang", "Congratulations on graduating with honors! 🎓 Wishing you lots of luck and success in your journey ahead. All the best for this exciting new chapter! ✨", 1.2)
-        ]
-        for name, wish, rot in sample_wishes:
-            cur.execute(
-                "INSERT INTO wishes (name, wish, rotation) VALUES (%s, %s, %s);",
-                (name, wish, rot)
-            )
-        print(f"Inserted {len(sample_wishes)} initial sample wishes.")
+    print(f"Current real wishes count: {count}")
 
     conn.commit()
     cur.close()
@@ -74,3 +60,4 @@ def init_tables():
 
 if __name__ == '__main__':
     init_tables()
+
