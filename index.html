@@ -25,6 +25,10 @@
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700;1,800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
 
+  <!-- Preload critical initial images -->
+  <link rel="preload" as="image" href="images/bachkhoa_campus_bg.jpg">
+  <link rel="preload" as="image" href="images/tuan_phong_portrait.jpg" fetchpriority="high">
+
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -188,7 +192,7 @@
             <div class="intro-card-media">
               <div class="intro-portrait-frame">
                 <img src="images/tuan_phong_portrait.jpg" alt="Tân cử nhân Nguyễn Tuấn Phong"
-                  class="intro-portrait-img">
+                  class="intro-portrait-img" width="768" height="1024" fetchpriority="high" decoding="async">
                 <div class="intro-portrait-glow"></div>
                 <div class="intro-portrait-badge">
                   <span class="portrait-badge-sparkle">✦</span> Tân Cử Nhân
