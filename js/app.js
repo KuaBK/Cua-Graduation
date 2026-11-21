@@ -388,46 +388,50 @@
   const scrollWishesBtn = document.getElementById('scroll-wishes-btn');
   let scrollWishesTimer = null;
 
-  function updateScrollWishesVisibility() {
+  function showScrollWishesBtn(durationMs = 2000) {
     if (!scrollWishesBtn) return;
-    if (!isEnvelopeOpen()) {
-      scrollWishesBtn.classList.remove('visible');
-      return;
-    }
-
-    const scrollY = window.scrollY || window.pageYOffset;
-    const guestbookEl = document.getElementById('guestbook');
-
-    // Nếu người dùng đã cuộn tới gần khu vực sổ lưu bút (còn cách 250px) thì ẩn nút
-    if (guestbookEl) {
-      const rect = guestbookEl.getBoundingClientRect();
-      if (rect.top <= 250) {
-        scrollWishesBtn.classList.remove('visible');
-        if (scrollWishesTimer) {
-          clearTimeout(scrollWishesTimer);
-          scrollWishesTimer = null;
-        }
-        return;
-      }
-    }
-
-    // Nếu đang ở quá gần đỉnh trang (chưa cuộn nhiều), chưa cần hiện
-    if (scrollY < 120) {
-      scrollWishesBtn.classList.remove('visible');
-      return;
-    }
-
-    // Đang scroll: HIỆN RÕ
+    scrollWishesBtn.classList.remove('fading');
     scrollWishesBtn.classList.add('visible');
 
-    // Reset timer: sau 2 giây ngừng scroll thì mờ mờ tắt (fade out)
     if (scrollWishesTimer) {
       clearTimeout(scrollWishesTimer);
     }
 
     scrollWishesTimer = setTimeout(() => {
       scrollWishesBtn.classList.remove('visible');
-    }, 2000);
+      scrollWishesBtn.classList.add('fading');
+    }, durationMs);
+  }
+
+  function hideScrollWishesBtn() {
+    if (!scrollWishesBtn) return;
+    scrollWishesBtn.classList.remove('visible');
+    scrollWishesBtn.classList.add('fading');
+    if (scrollWishesTimer) {
+      clearTimeout(scrollWishesTimer);
+      scrollWishesTimer = null;
+    }
+  }
+
+  function updateScrollWishesVisibility() {
+    if (!scrollWishesBtn) return;
+    if (!isEnvelopeOpen()) {
+      hideScrollWishesBtn();
+      return;
+    }
+
+    const guestbookEl = document.getElementById('guestbook');
+    if (guestbookEl) {
+      const rect = guestbookEl.getBoundingClientRect();
+      // Nếu khu vực sổ lưu bút đã cuộn vào tầm mắt thì ẩn nút
+      if (rect.top <= window.innerHeight * 0.7) {
+        hideScrollWishesBtn();
+        return;
+      }
+    }
+
+    // Khi cuộn trang: HIỆN RÕ NÉT (sẽ mờ dần sau 2s nếu ngừng cuộn)
+    showScrollWishesBtn(2000);
   }
 
   window.addEventListener('scroll', updateScrollWishesVisibility, { passive: true });
@@ -529,6 +533,11 @@
     if (musicToggleBtn) {
       musicToggleBtn.style.display = 'flex';
     }
+
+    // Hiển thị nút "Kéo xuống để gửi lời chúc" chào mừng khoảng 2.5s rồi fade mờ dần
+    setTimeout(() => {
+      showScrollWishesBtn(2500);
+    }, 1200);
   }
 
   if (waxSealBtn) {
