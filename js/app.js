@@ -383,6 +383,67 @@
   }
 
   // =========================================================================
+  // 4.1. NÚT CUỘN XUỐNG GỬI LỜI CHÚC (HIỆN RÕ KHI SCROLL & MỜ DẦN SAU 2 GIÂY)
+  // =========================================================================
+  const scrollWishesBtn = document.getElementById('scroll-wishes-btn');
+  let scrollWishesTimer = null;
+
+  function updateScrollWishesVisibility() {
+    if (!scrollWishesBtn) return;
+    if (!isEnvelopeOpen()) {
+      scrollWishesBtn.classList.remove('visible');
+      return;
+    }
+
+    const scrollY = window.scrollY || window.pageYOffset;
+    const guestbookEl = document.getElementById('guestbook');
+
+    // Nếu người dùng đã cuộn tới gần khu vực sổ lưu bút (còn cách 250px) thì ẩn nút
+    if (guestbookEl) {
+      const rect = guestbookEl.getBoundingClientRect();
+      if (rect.top <= 250) {
+        scrollWishesBtn.classList.remove('visible');
+        if (scrollWishesTimer) {
+          clearTimeout(scrollWishesTimer);
+          scrollWishesTimer = null;
+        }
+        return;
+      }
+    }
+
+    // Nếu đang ở quá gần đỉnh trang (chưa cuộn nhiều), chưa cần hiện
+    if (scrollY < 120) {
+      scrollWishesBtn.classList.remove('visible');
+      return;
+    }
+
+    // Đang scroll: HIỆN RÕ
+    scrollWishesBtn.classList.add('visible');
+
+    // Reset timer: sau 2 giây ngừng scroll thì mờ mờ tắt (fade out)
+    if (scrollWishesTimer) {
+      clearTimeout(scrollWishesTimer);
+    }
+
+    scrollWishesTimer = setTimeout(() => {
+      scrollWishesBtn.classList.remove('visible');
+    }, 2000);
+  }
+
+  window.addEventListener('scroll', updateScrollWishesVisibility, { passive: true });
+
+  if (scrollWishesBtn) {
+    scrollWishesBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const guestbookEl = document.getElementById('guestbook');
+      if (guestbookEl) {
+        guestbookEl.scrollIntoView({ behavior: 'smooth' });
+        trackClick('scroll_wishes_btn', 'Bấm nút cuộn gửi lời chúc');
+      }
+    });
+  }
+
+  // =========================================================================
   // 5. HIỆU ỨNG MỞ PHONG BÌ 3D HOÀNG GIA: TỰ ĐỘNG VÀO SAU 3.5S (KHÔNG CẦN BẤM THÊM)
   // =========================================================================
   const envelopeOverlay = document.getElementById('envelope-overlay');

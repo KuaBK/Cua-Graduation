@@ -158,8 +158,16 @@
   <canvas id="confetti-canvas"></canvas>
 
   <!-- =========================================================================
-       3. NÚT LOA BẬT/TẮT NHẠC NỀN (GÓC PHẢI DƯỚI MÀN HÌNH - ẢNH 1)
+       3. NÚT LOA & NÚT CUỘN XUỐNG GỬI LỜI CHÚC (GÓC PHẢI MÀN HÌNH)
        ========================================================================= -->
+  <button id="scroll-wishes-btn" class="scroll-wishes-btn" title="Kéo xuống dưới để gửi lời chúc" aria-label="Kéo xuống dưới để gửi lời chúc">
+    <span class="scroll-wishes-sparkle">✦</span>
+    <span class="scroll-wishes-text">Kéo xuống để gửi lời chúc</span>
+    <svg class="scroll-wishes-arrow" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 5v14M19 12l-7 7-7-7" />
+    </svg>
+  </button>
+
   <button id="music-toggle-btn" class="music-toggle-btn" title="Bật nhạc nền" aria-label="Bật/Tắt nhạc nền">
     <div class="music-icon-wrap">
       <!-- Muted speaker icon (initial state) -->
@@ -335,20 +343,7 @@
     </section>
 
 
-    <!-- SECTION 4: POLAROID GALLERY (KHOẢNH KHẮC ĐẠI HỌC - KHUNG ẢNH TO RÕ RỆT TRÊN LAPTOP / PC) -->
-    <section class="gallery-section reveal-on-scroll" id="gallery">
-      <div class="container-wide">
-        <div class="section-header-centered">
-          <h2 class="section-title">Khoảnh Khắc Đại Học</h2>
-          <div class="section-title-line"></div>
-        </div>
-
-        <!-- Polaroid Grid rendered by JS (To hơn trên PC/Laptop: 280px - 300px) -->
-        <div id="gallery-grid" class="gallery-grid"></div>
-      </div>
-    </section>
-
-    <!-- SECTION 5: MAP / BẢN ĐỒ CHỈ ĐƯỜNG (RỘNG RÃI TRÊN LAPTOP / PC) -->
+    <!-- SECTION 3: MAP / BẢN ĐỒ CHỈ ĐƯỜNG (RỘNG RÃI TRÊN LAPTOP / PC) -->
     <section class="map-section reveal-on-scroll" id="location">
       <div class="container-wide">
         <div class="map-card-container">
@@ -404,6 +399,19 @@
             </iframe>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: POLAROID GALLERY (KHOẢNH KHẮC ĐẠI HỌC - KHUNG ẢNH TO RÕ RỆT TRÊN LAPTOP / PC) -->
+    <section class="gallery-section reveal-on-scroll" id="gallery">
+      <div class="container-wide">
+        <div class="section-header-centered">
+          <h2 class="section-title">Khoảnh Khắc Đại Học</h2>
+          <div class="section-title-line"></div>
+        </div>
+
+        <!-- Polaroid Grid rendered by JS (To hơn trên PC/Laptop: 280px - 300px) -->
+        <div id="gallery-grid" class="gallery-grid"></div>
       </div>
     </section>
 
